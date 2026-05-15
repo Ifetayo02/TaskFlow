@@ -7,6 +7,7 @@ import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import Dashboard from './pages/Dashboard';
 import BoardPage from './pages/KanbanBoard';
+import InviteMembers from './pages/Invite';  
 
 function App() {
   return (
@@ -24,6 +25,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+  path="/workspace/:workspaceId/invite"
+  element={
+    <ProtectedRoute>
+      <InviteMembers />
+    </ProtectedRoute>
+  }
+/>
           <Route
             path="/board/:boardId"
             element={

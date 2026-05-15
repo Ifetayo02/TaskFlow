@@ -31,18 +31,18 @@ const SidebarItem = ({ icon: Icon, label, active = false, onClick }) => (
 );
 
 // ─── Board Card ───────────────────────────────────────────────
-const BoardCard = ({ title, updatedAt, bgColor, onClick }) => {
-  // pick a gradient based on bgColor or cycle through defaults
-  const gradients = [
-    'from-indigo-500 to-indigo-600',
-    'from-purple-500 to-purple-600',
-    'from-orange-500 to-orange-600',
-    'from-blue-700 to-blue-800',
-    'from-slate-800 to-indigo-900',
-    'from-teal-500 to-teal-600',
-    'from-rose-500 to-rose-600',
-  ];
-  const gradient = gradients[Math.floor(Math.random() * gradients.length)];
+const gradients = [
+  'from-indigo-500 to-indigo-600',
+  'from-purple-500 to-purple-600',
+  'from-orange-500 to-orange-600',
+  'from-blue-700 to-blue-800',
+  'from-slate-800 to-indigo-900',
+  'from-teal-500 to-teal-600',
+  'from-rose-500 to-rose-600',
+];
+
+const BoardCard = ({ title, updatedAt, index, onClick }) => {
+  const gradient = gradients[index % gradients.length];
 
   return (
     <div
@@ -101,8 +101,6 @@ const Dashboard = () => {
   const [pageLoading, setPageLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-
-  // active workspace in sidebar
   const [activeWorkspace, setActiveWorkspace] = useState(null);
 
   // modals
@@ -112,12 +110,10 @@ const Dashboard = () => {
   const [boardTitle, setBoardTitle] = useState('');
   const [modalLoading, setModalLoading] = useState(false);
 
-  // ── fetch workspaces on mount
   useEffect(() => {
     fetchWorkspaces();
   }, []);
 
-  // ── fetch boards when active workspace changes
   useEffect(() => {
     if (activeWorkspace) {
       fetchBoards(activeWorkspace._id);
@@ -129,10 +125,7 @@ const Dashboard = () => {
       setPageLoading(true);
       const res = await axiosInstance.get('/workspaces');
       setWorkspaces(res.data);
-      // auto-select the first workspace
-      if (res.data.length > 0) {
-        setActiveWorkspace(res.data[0]);
-      }
+      if (res.data.length > 0) setActiveWorkspace(res.data[0]);
     } catch (err) {
       setError('Failed to load workspaces.');
     } finally {
@@ -142,7 +135,6 @@ const Dashboard = () => {
 
   const fetchBoards = async (workspaceId) => {
     try {
-      // boards are embedded in the workspace — filter by active workspace
       const res = await axiosInstance.get('/workspaces');
       const ws = res.data.find((w) => w._id === workspaceId);
       setBoards(ws?.boards || []);
@@ -151,7 +143,6 @@ const Dashboard = () => {
     }
   };
 
-  // ── create workspace
   const handleCreateWorkspace = async (e) => {
     e.preventDefault();
     if (!workspaceName.trim()) return;
@@ -169,7 +160,6 @@ const Dashboard = () => {
     }
   };
 
-  // ── create board
   const handleCreateBoard = async (e) => {
     e.preventDefault();
     if (!boardTitle.trim() || !activeWorkspace) return;
@@ -189,18 +179,15 @@ const Dashboard = () => {
     }
   };
 
-  // ── logout
   const handleLogout = () => {
     logout();
     navigate('/signin');
   };
 
-  // ── filter boards by search
   const filteredBoards = boards.filter((b) =>
     b.title?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // ── loading screen
   if (pageLoading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
@@ -251,9 +238,10 @@ const Dashboard = () => {
                 onClick={() => setActiveWorkspace(ws)}
               />
             ))}
-
             {workspaces.length === 0 && (
-              <p className="px-6 text-xs text-slate-500 italic">No workspaces yet</p>
+              <p className="px-6 text-xs text-slate-500 italic">
+                No workspaces yet
+              </p>
             )}
           </div>
 
@@ -261,7 +249,16 @@ const Dashboard = () => {
           <div className="border-t border-slate-800 pt-4 space-y-1">
             <SidebarItem icon={ClipboardList} label="My Tasks" />
             <SidebarItem icon={Star} label="Starred Boards" />
-            <SidebarItem icon={Users} label="Members" />
+            {/* Members — navigates to invite page for active workspace */}
+            <SidebarItem
+              icon={Users}
+              label="Members"
+              onClick={() => {
+                if (activeWorkspace) {
+                  navigate(`/workspace/${activeWorkspace._id}/invite`);
+                }
+              }}
+            />
           </div>
 
           {/* Bottom buttons */}
@@ -312,6 +309,16 @@ const Dashboard = () => {
                 <Bell size={20} />
                 <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
               </button>
+              {/* Invite members shortcut */}
+              {activeWorkspace && (
+                <button
+                  onClick={() => navigate(`/workspace/${activeWorkspace._id}/invite`)}
+                  className="flex items-center gap-2 border border-slate-200 hover:border-indigo-400 hover:text-indigo-600 text-slate-500 text-sm font-semibold px-4 py-2 rounded-xl transition-all"
+                >
+                  <Users size={15} />
+                  Members
+                </button>
+              )}
             </div>
           </header>
 
@@ -319,17 +326,21 @@ const Dashboard = () => {
           {error && (
             <div className="mx-8 mt-6 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 font-medium flex justify-between">
               {error}
-              <button onClick={() => setError('')}><X size={16} /></button>
+              <button onClick={() => setError('')}>
+                <X size={16} />
+              </button>
             </div>
           )}
 
-          {/* Empty state — no workspaces */}
+          {/* Empty state */}
           {workspaces.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
               <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-4">
                 <LayoutGrid className="text-indigo-500" size={32} />
               </div>
-              <h2 className="text-xl font-bold text-slate-900 mb-2">No workspaces yet</h2>
+              <h2 className="text-xl font-bold text-slate-900 mb-2">
+                No workspaces yet
+              </h2>
               <p className="text-slate-500 text-sm mb-6 max-w-xs">
                 Create your first workspace to start organizing your boards and tasks.
               </p>
@@ -341,15 +352,14 @@ const Dashboard = () => {
               </button>
             </div>
           ) : (
-            /* Board Grid */
             <div className="p-8">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredBoards.map((board) => (
+                {filteredBoards.map((board, index) => (
                   <BoardCard
                     key={board._id}
                     title={board.title}
                     updatedAt={board.updatedAt}
-                    bgColor={board.bgColor}
+                    index={index}
                     onClick={() => navigate(`/board/${board._id}`)}
                   />
                 ))}
@@ -368,7 +378,6 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* No results from search */}
               {filteredBoards.length === 0 && boards.length > 0 && (
                 <p className="text-center text-slate-400 text-sm mt-12">
                   No boards match "{searchQuery}"
@@ -388,14 +397,18 @@ const Dashboard = () => {
           </p>
         </div>
         <div>
-          <h5 className="text-sm font-bold text-indigo-600 mb-4 uppercase tracking-widest">Product</h5>
+          <h5 className="text-sm font-bold text-indigo-600 mb-4 uppercase tracking-widest">
+            Product
+          </h5>
           <ul className="text-sm text-slate-600 space-y-3 font-medium">
             <li className="hover:text-indigo-600 cursor-pointer">Features</li>
             <li className="hover:text-indigo-600 cursor-pointer">Security</li>
           </ul>
         </div>
         <div>
-          <h5 className="text-sm font-bold text-indigo-600 mb-4 uppercase tracking-widest">Company</h5>
+          <h5 className="text-sm font-bold text-indigo-600 mb-4 uppercase tracking-widest">
+            Company
+          </h5>
           <ul className="text-sm text-slate-600 space-y-3 font-medium">
             <li className="hover:text-indigo-600 cursor-pointer">About</li>
             <li className="hover:text-indigo-600 cursor-pointer">Careers</li>
@@ -403,7 +416,7 @@ const Dashboard = () => {
         </div>
       </footer>
 
-      {/* ── Create Workspace Modal ── */}
+      {/* Create Workspace Modal */}
       {showWorkspaceModal && (
         <Modal
           title="Create a new workspace"
@@ -427,7 +440,7 @@ const Dashboard = () => {
         </Modal>
       )}
 
-      {/* ── Create Board Modal ── */}
+      {/* Create Board Modal */}
       {showBoardModal && (
         <Modal
           title={`New board in "${activeWorkspace?.name}"`}

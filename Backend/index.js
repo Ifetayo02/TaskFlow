@@ -27,7 +27,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/workspaces', require('./routes/workspaces'));
 app.use('/api/boards', require('./routes/boards'));
 app.use('/api/tasks', require('./routes/tasks'));
-app.use('/api/test', require('./routes/test'));
+
 
 // error handler
 app.use(errorHandler);

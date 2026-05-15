@@ -49,6 +49,20 @@ const taskSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    // MOVED INSIDE THE MAIN OBJECT
+    checklist: [
+      {
+        label: { type: String, required: true },
+        checked: { type: Boolean, default: false },
+      },
+    ],
+    comments: [
+      {
+        author: { type: String },
+        text: { type: String },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true }
 );

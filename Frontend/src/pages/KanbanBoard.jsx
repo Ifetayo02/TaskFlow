@@ -249,10 +249,13 @@ const BoardPage = () => {
                 </div>
               ))}
             </div>
-            <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition-all">
-              <UserPlus size={14} />
-              Invite
-            </button>
+           <button
+  onClick={() => navigate(`/workspace/${board?.workspace}/invite`)}
+  className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition-all"
+>
+  <UserPlus size={14} />
+  Invite
+</button>
             <button className="text-slate-400 hover:text-white transition-colors">
               <Settings size={18} />
             </button>
