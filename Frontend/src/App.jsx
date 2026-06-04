@@ -8,6 +8,10 @@ import SignIn from './pages/SignIn';
 import Dashboard from './pages/Dashboard';
 import BoardPage from './pages/KanbanBoard';
 import InviteMembers from './pages/Invite';  
+import AuthCallback from './pages/AuthCallback';
+
+// inside Routes
+
 
 function App() {
   return (
@@ -17,6 +21,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route
             path="/dashboard"
             element={

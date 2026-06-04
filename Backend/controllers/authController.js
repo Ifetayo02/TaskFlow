@@ -69,4 +69,41 @@ const getMe = async (req, res) => {
   res.json(req.user);
 };
 
-module.exports = { register, login, getMe };
+// POST /api/auth/google
+const googleAuth = async (req, res) => {
+  try {
+    const { name, email, avatar } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+
+    // find or create the user
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // first time Google sign in — create account
+      user = await User.create({
+        name,
+        email,
+        passwordHash: 'GOOGLE_AUTH',
+        avatar: avatar || null,
+      });
+    }
+
+    // return your own JWT just like regular login
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      token: generateToken(user._id),
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { register, login, getMe, googleAuth };
+
+

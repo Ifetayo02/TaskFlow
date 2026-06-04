@@ -1,13 +1,14 @@
 import { ArrowRight, Lock, ShieldCheck } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerUser } from '../api/auth';
+import useGoogleAuth from '../hooks/useGoogleAuth';
 import { useAuth } from '../context/AuthContext';
 import React, { useState, useEffect } from 'react';
 
 const SignUp = () => {
   const navigate = useNavigate();
   const { login, user } = useAuth();
-
+const { signInWithGoogle, loading: googleLoading, error: googleError } = useGoogleAuth();
 // if already logged in, skip straight to dashboard
 useEffect(() => {
   if (user) navigate('/dashboard');
@@ -143,14 +144,18 @@ useEffect(() => {
         </div>
 
         {/* Google Auth */}
-        <button className="w-full flex items-center justify-center gap-3 py-4 border border-slate-100 rounded-xl hover:bg-slate-50 transition-all font-semibold text-slate-700">
-          <img
-            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg"
-            className="w-5 h-5"
-            alt="Google"
-          />
-          Google
-        </button>
+  <button
+  type="button"
+  onClick={() => window.location.href = 'http://localhost:5000/api/auth/google'}
+  className="w-full flex items-center justify-center gap-3 py-4 border border-slate-100 rounded-xl hover:bg-slate-50 transition-all font-semibold text-slate-700"
+>
+  <img
+    src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg"
+    className="w-5 h-5"
+    alt="Google"
+  />
+  Continue with Google
+</button>
 
         <p className="mt-10 text-center text-sm text-slate-500 font-medium">
           Already have an account?{' '}

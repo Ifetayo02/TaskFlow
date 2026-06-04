@@ -1,6 +1,3 @@
-// server/models/User.js
-const mongoose = require('mongoose');
-
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -17,7 +14,11 @@ const userSchema = new mongoose.Schema(
     },
     passwordHash: {
       type: String,
-      required: true,
+      default: null, // null for Google users
+    },
+    avatar: {
+      type: String,
+      default: null,
     },
     workspaces: [
       {

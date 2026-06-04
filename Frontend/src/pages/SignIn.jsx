@@ -1,6 +1,7 @@
 import { Mail, Lock, LayoutGrid, Layout } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser } from '../api/auth';
+import useGoogleAuth from '../hooks/useGoogleAuth';
 import { useAuth } from '../context/AuthContext';
 import React, { useState, useEffect } from 'react';
 
@@ -8,6 +9,7 @@ const SignIn = () => {
   const navigate = useNavigate();
  
     const { login, user } = useAuth();
+    const { signInWithGoogle, loading: googleLoading, error: googleError } = useGoogleAuth();
   
   // if already logged in, skip straight to dashboard
   useEffect(() => {
@@ -128,14 +130,30 @@ const SignIn = () => {
 
         {/* Social Auth Buttons */}
         <div className="grid grid-cols-2 gap-4">
-          <button className="flex items-center justify-center gap-3 py-3.5 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all font-bold text-xs text-slate-700">
-            <img
-              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg"
-              className="w-4 h-4"
-              alt="Google"
-            />
-            GOOGLE
-          </button>
+        {/* Google error */}
+{googleError && (
+  <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 font-medium">
+    {googleError}
+  </div>
+)}
+
+<button
+  type="button"
+  onClick={signInWithGoogle}
+  disabled={googleLoading}
+  className="w-full flex items-center justify-center gap-3 py-4 border border-slate-200 rounded-xl hover:bg-slate-50 disabled:opacity-60 transition-all font-semibold text-slate-700"
+>
+  {googleLoading ? (
+    <Loader2 size={18} className="animate-spin text-slate-400" />
+  ) : (
+    <img
+      src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg"
+      className="w-5 h-5"
+      alt="Google"
+    />
+  )}
+  {googleLoading ? 'Signing in...' : 'Continue with Google'}
+</button>
           <button className="flex items-center justify-center gap-3 py-3.5 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all font-bold text-xs text-slate-700">
             <Layout className="w-4 h-4" />
             GITHUB

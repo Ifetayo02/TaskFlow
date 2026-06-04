@@ -9,10 +9,10 @@ const useSocket = (boardId) => {
     if (!boardId) return;
 
     // connect to the server
-    socketRef.current = io('http://localhost:5000');
-
-    // join this board's room
+     socketRef.current = io(import.meta.env.VITE_SERVER_URL);
     socketRef.current.emit('join_board', boardId);
+
+
 
     // cleanup on unmount
     return () => {
