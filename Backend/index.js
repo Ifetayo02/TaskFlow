@@ -2,8 +2,7 @@ const express = require('express');
 const http = require('http');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const session = require('express-session');
-const passport = require('./config/passport');
+
 const connectDB = require('./config/db');
 const initSocket = require('./config/socket');
 const errorHandler = require('./middleware/errorHandler');
@@ -17,21 +16,18 @@ const server = http.createServer(app);
 const io = initSocket(server);
 app.set('io', io);
 
+// replace your current cors line with this
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: [
+    'http://localhost:5173',
+    'https://task-flow-omega-seven.vercel.app',
+  ],
   credentials: true,
 }));
 app.use(express.json());
 
 // session needed for passport Google flow
-app.use(session({
-  secret: process.env.JWT_SECRET,
-  resave: false,
-  saveUninitialized: false,
-}));
 
-app.use(passport.initialize());
-app.use(passport.session());
 
 // routes
 app.use('/api/auth', require('./routes/auth'));

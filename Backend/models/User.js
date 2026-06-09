@@ -1,3 +1,6 @@
+// server/models/User.js
+const mongoose = require('mongoose');
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -14,7 +17,7 @@ const userSchema = new mongoose.Schema(
     },
     passwordHash: {
       type: String,
-      default: null, // null for Google users
+      default: null,
     },
     avatar: {
       type: String,

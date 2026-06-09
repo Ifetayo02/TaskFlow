@@ -13,3 +13,9 @@ export const getMe = () =>
 // sends Google user info to your backend
 export const googleAuthAPI = (data) =>
   axiosInstance.post('/auth/google', data);
+
+export const forgotPasswordAPI = (data) =>
+  axiosInstance.post('/auth/forgot-password', data);
+
+export const resetPasswordAPI = (data) =>
+  axiosInstance.post('/auth/reset-password', data);
