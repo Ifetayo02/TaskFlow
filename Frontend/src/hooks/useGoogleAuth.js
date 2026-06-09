@@ -1,4 +1,3 @@
-// client/src/hooks/useGoogleAuth.js
 import { useState } from 'react';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../config/firebase';
