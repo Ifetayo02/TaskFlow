@@ -68,11 +68,11 @@ useEffect(() => {
         </div>
 
         {/* Error Message */}
-        {error && (
-          <div className="mb-6 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 font-medium">
-            {error}
-          </div>
-        )}
+    {(error || googleError) && (
+  <div className="mb-6 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 font-medium">
+    {error || googleError}
+  </div>
+)}
 
         {/* Form */}
         <form className="space-y-6" onSubmit={handleSubmit}>
@@ -146,7 +146,7 @@ useEffect(() => {
         {/* Google Auth */}
   <button
   type="button"
-  onClick={() => window.location.href = 'http://localhost:5000/api/auth/google'}
+  onClick={signInWithGoogle}
   className="w-full flex items-center justify-center gap-3 py-4 border border-slate-100 rounded-xl hover:bg-slate-50 transition-all font-semibold text-slate-700"
 >
   <img
