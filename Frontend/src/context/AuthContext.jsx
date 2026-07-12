@@ -4,6 +4,19 @@ import { getMe } from '../api/auth';
 
 const AuthContext = createContext();
 
+const updateUser = (updatedUser) => {
+  setUser(updatedUser);
+  if (updatedUser.token) {
+    localStorage.setItem('token', updatedUser.token);
+  }
+};
+
+return (
+  <AuthContext.Provider value={{ user, loading, login, logout, updateUser }}>
+    {children}
+  </AuthContext.Provider>
+);
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);

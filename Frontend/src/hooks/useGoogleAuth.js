@@ -1,15 +1,10 @@
 // client/src/hooks/useGoogleAuth.js
 import { useState } from 'react';
-import {
-  signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult,
-} from 'firebase/auth';
+import { signInWithPopup } from 'firebase/auth'; // 💡 Changed
 import { auth, googleProvider } from '../config/firebase';
 import { googleAuthAPI } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
 
 const useGoogleAuth = () => {
   const { login } = useAuth();
@@ -17,50 +12,47 @@ const useGoogleAuth = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // handle redirect result when user comes back from Google
-  useEffect(() => {
-    const handleRedirectResult = async () => {
-      try {
-        setLoading(true);
-        const result = await getRedirectResult(auth);
-
-        if (result?.user) {
-          const firebaseUser = result.user;
-          const res = await googleAuthAPI({
-            name: firebaseUser.displayName,
-            email: firebaseUser.email,
-            avatar: firebaseUser.photoURL,
-          });
-          login(res.data, res.data.token);
-          navigate('/dashboard');
-        }
-      } catch (err) {
-        if (err.code !== 'auth/no-current-user') {
-          setError('Google sign-in failed. Please try again.');
-          console.error('Google redirect error:', err);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    handleRedirectResult();
-  }, []);
-
   const signInWithGoogle = async () => {
     try {
       setLoading(true);
       setError('');
-      // use redirect instead of popup — avoids COOP browser issues
-      await signInWithRedirect(auth, googleProvider);
+      
+      // 💡 1. Trigger the popup directly
+      const result = await signInWithPopup(auth, googleProvider);
+      console.log('Popup result:', result);
+
+      const firebaseUser = result.user;
+      if (!firebaseUser?.email) {
+        setError('Could not get email from Google. Please try again.');
+        return;
+      }
+
+      // 💡 2. Send straight to your backend right here
+      const res = await googleAuthAPI({
+        name: firebaseUser.displayName,
+        email: firebaseUser.email,
+        avatar: firebaseUser.photoURL,
+      });
+
+      console.log('Backend response:', res.data);
+
+      login(res.data, res.data.token);
+      navigate('/dashboard');
     } catch (err) {
-      setError('Google sign-in failed. Please try again.');
       console.error('Google auth error:', err);
+      if (err.code === 'auth/popup-closed-by-user') return;
+
+      setError(
+        err.response?.data?.message ||
+        err.message ||
+        'Google sign-in failed. Please try again.'
+      );
+    } finally {
       setLoading(false);
     }
   };
 
-  return { signInWithGoogle, loading, error };
+  return { signInWithGoogle, loading, error }; // No more useEffect needed!
 };
 
 export default useGoogleAuth;

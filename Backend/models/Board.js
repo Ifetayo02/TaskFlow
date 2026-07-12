@@ -13,6 +13,10 @@ const boardSchema = new mongoose.Schema(
       ref: 'Workspace',
       required: true,
     },
+    starred: {
+  type: Boolean,
+  default: false,
+},
     bgColor: {
       type: String,
       default: '#1e293b', // slate-800

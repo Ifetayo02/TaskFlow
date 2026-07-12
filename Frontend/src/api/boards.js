@@ -9,3 +9,5 @@ export const getBoard = (id) =>
 
 export const deleteBoard = (id) =>
   axiosInstance.delete(`/boards/${id}`);
+export const toggleStarBoard = (id) =>
+  axiosInstance.patch(`/boards/${id}/star`);

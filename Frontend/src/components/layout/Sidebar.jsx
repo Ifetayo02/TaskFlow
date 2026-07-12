@@ -1,14 +1,53 @@
-import { useNavigate } from 'react-router-dom';
-import { LayoutGrid, ClipboardList, Users, BarChart2, Settings, LogOut } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  LayoutGrid,
+  ClipboardList,
+  Users,
+  BarChart2,
+  Settings,
+  LogOut,
+} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useState, useEffect } from 'react';
+import axiosInstance from '../../api/axiosInstance';
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const { boardId } = useParams(); // only set when inside a board
   const { logout } = useAuth();
+
+  const [workspaceId, setWorkspaceId] = useState(null);
+
+  // if we're on a board page, fetch the board to know its workspace
+  useEffect(() => {
+    if (boardId) {
+      axiosInstance
+        .get(`/boards/${boardId}`)
+        .then((res) => setWorkspaceId(res.data.workspace))
+        .catch(() => setWorkspaceId(null));
+    }
+  }, [boardId]);
 
   const handleLogout = () => {
     logout();
     navigate('/signin');
+  };
+
+  const handleMembersClick = () => {
+    if (workspaceId) {
+      navigate(`/workspace/${workspaceId}/invite`);
+    } else {
+      // not inside a board — go to dashboard to pick a workspace first
+      navigate('/dashboard');
+    }
+  };
+
+  const handleAnalyticsClick = () => {
+    if (boardId) {
+      navigate(`/board/${boardId}/analytics`);
+    } else {
+      navigate('/dashboard');
+    }
   };
 
   return (
@@ -22,13 +61,34 @@ const Sidebar = () => {
       </button>
 
       {/* Nav icons */}
-      <NavIcon icon={ClipboardList} tooltip="My Tasks" onClick={() => navigate('/dashboard')} />
-      <NavIcon icon={Users} tooltip="Members" />
-      <NavIcon icon={BarChart2} tooltip="Analytics" />
+      <NavIcon
+        icon={ClipboardList}
+        tooltip="My Tasks"
+        onClick={() => navigate('/my-tasks')}
+      />
+      <NavIcon
+        icon={Users}
+        tooltip="Members"
+        onClick={handleMembersClick}
+      />
+      <NavIcon
+        icon={BarChart2}
+        tooltip="Analytics"
+        onClick={handleAnalyticsClick}
+      />
+      <NavIcon
+        icon={Settings}
+        tooltip="Profile & Settings"
+        onClick={() => navigate('/profile')}
+      />
 
       {/* Bottom */}
       <div className="mt-auto flex flex-col items-center gap-2">
-        <NavIcon icon={Settings} tooltip="Settings" />
+        <NavIcon
+          icon={Settings}
+          tooltip="Settings"
+          onClick={() => navigate('/dashboard')}
+        />
         <NavIcon icon={LogOut} tooltip="Sign Out" onClick={handleLogout} />
       </div>
     </aside>

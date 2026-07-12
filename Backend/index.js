@@ -20,6 +20,8 @@ app.set('io', io);
 app.use(cors({
   origin: [
     'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5175',
     'https://task-flow-omega-seven.vercel.app',
   ],
   credentials: true,

@@ -14,16 +14,16 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../api/axiosInstance';
+import { toggleStarBoard } from '../api/boards';
 
 // ─── Sidebar Item ─────────────────────────────────────────────
 const SidebarItem = ({ icon: Icon, label, active = false, onClick }) => (
   <div
     onClick={onClick}
-    className={`flex items-center gap-3 px-6 py-3 cursor-pointer transition-colors ${
-      active
+    className={`flex items-center gap-3 px-6 py-3 cursor-pointer transition-colors ${active
         ? 'text-white border-r-4 border-indigo-500 bg-white/5'
         : 'text-slate-400 hover:text-white'
-    }`}
+      }`}
   >
     <Icon size={20} />
     <span className="text-sm font-medium">{label}</span>
@@ -41,23 +41,40 @@ const gradients = [
   'from-rose-500 to-rose-600',
 ];
 
-const BoardCard = ({ title, updatedAt, index, onClick }) => {
+const BoardCard = ({ board, index, onClick, onToggleStar }) => {
   const gradient = gradients[index % gradients.length];
+
+  const handleStarClick = (e) => {
+    e.stopPropagation();
+    onToggleStar(board._id);
+  };
 
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all group cursor-pointer border border-slate-100 hover:-translate-y-1"
+      className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all group cursor-pointer border border-slate-100 hover:-translate-y-1 relative"
     >
       <div className={`h-24 w-full bg-gradient-to-br ${gradient}`} />
+
+      <button
+        onClick={handleStarClick}
+        className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-all shadow-sm"
+        title={board.starred ? 'Unstar board' : 'Star board'}
+      >
+        <Star
+          size={15}
+          className={board.starred ? 'fill-amber-400 text-amber-400' : 'text-slate-400'}
+        />
+      </button>
+
       <div className="p-5">
         <h3 className="font-bold text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors">
-          {title}
+          {board.title}
         </h3>
         <p className="text-xs text-slate-400 flex items-center gap-1">
           <span className="inline-block w-3 h-3 rounded-full border border-slate-200"></span>
-          {updatedAt
-            ? `Last updated: ${new Date(updatedAt).toLocaleDateString()}`
+          {board.updatedAt
+            ? `Last updated: ${new Date(board.updatedAt).toLocaleDateString()}`
             : 'Just created'}
         </p>
       </div>
@@ -102,6 +119,7 @@ const Dashboard = () => {
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeWorkspace, setActiveWorkspace] = useState(null);
+  const [showStarredOnly, setShowStarredOnly] = useState(false);
 
   // modals
   const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
@@ -179,14 +197,25 @@ const Dashboard = () => {
     }
   };
 
+  const handleToggleStar = async (boardId) => {
+    try {
+      const res = await toggleStarBoard(boardId);
+      setBoards((prev) =>
+        prev.map((b) => (b._id === boardId ? res.data : b))
+      );
+    } catch (err) {
+      setError('Failed to update star.');
+    }
+  };
+
   const handleLogout = () => {
     logout();
     navigate('/signin');
   };
 
-  const filteredBoards = boards.filter((b) =>
-    b.title?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredBoards = boards
+    .filter((b) => b.title?.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter((b) => !showStarredOnly || b.starred);
 
   if (pageLoading) {
     return (
@@ -212,9 +241,20 @@ const Dashboard = () => {
           </div>
 
           {/* User Profile */}
-          <div className="mx-4 mb-8 p-3 bg-white/5 rounded-xl border border-white/10 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white text-sm flex-shrink-0">
-              {user?.name?.charAt(0).toUpperCase() || 'U'}
+          <div
+            onClick={() => navigate('/profile')}
+            className="mx-4 mb-8 p-3 bg-white/5 rounded-xl border border-white/10 flex items-center gap-3 cursor-pointer hover:bg-white/10 transition-all"
+          >
+            <div className="w-10 h-10 rounded-lg overflow-hidden bg-indigo-600 flex items-center justify-center font-bold text-white text-sm flex-shrink-0">
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt="Avatar"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                user?.name?.charAt(0).toUpperCase() || 'U'
+              )}
             </div>
             <div className="overflow-hidden">
               <p className="text-sm font-bold truncate">{user?.name || 'User'}</p>
@@ -234,8 +274,11 @@ const Dashboard = () => {
                 key={ws._id}
                 icon={LayoutGrid}
                 label={ws.name}
-                active={activeWorkspace?._id === ws._id}
-                onClick={() => setActiveWorkspace(ws)}
+                active={!showStarredOnly && activeWorkspace?._id === ws._id}
+                onClick={() => {
+                  setShowStarredOnly(false);
+                  setActiveWorkspace(ws);
+                }}
               />
             ))}
             {workspaces.length === 0 && (
@@ -247,9 +290,17 @@ const Dashboard = () => {
 
           {/* Nav items */}
           <div className="border-t border-slate-800 pt-4 space-y-1">
-            <SidebarItem icon={ClipboardList} label="My Tasks" />
-            <SidebarItem icon={Star} label="Starred Boards" />
-            {/* Members — navigates to invite page for active workspace */}
+            <SidebarItem
+              icon={ClipboardList}
+              label="My Tasks"
+              onClick={() => navigate('/my-tasks')}
+            />
+            <SidebarItem
+              icon={Star}
+              label="Starred Boards"
+              active={showStarredOnly}
+              onClick={() => setShowStarredOnly((prev) => !prev)}
+            />
             <SidebarItem
               icon={Users}
               label="Members"
@@ -285,11 +336,15 @@ const Dashboard = () => {
           <header className="h-20 bg-white border-b border-slate-200 px-8 flex items-center justify-between sticky top-0 z-10">
             <div>
               <h1 className="text-2xl font-bold text-slate-900">
-                {activeWorkspace ? activeWorkspace.name : 'My Workspaces'}
+                {showStarredOnly
+                  ? 'Starred Boards'
+                  : activeWorkspace
+                    ? activeWorkspace.name
+                    : 'My Workspaces'}
               </h1>
               {activeWorkspace && (
                 <p className="text-xs text-slate-400 mt-0.5">
-                  {boards.length} board{boards.length !== 1 ? 's' : ''}
+                  {filteredBoards.length} board{filteredBoards.length !== 1 ? 's' : ''}
                 </p>
               )}
             </div>
@@ -309,7 +364,6 @@ const Dashboard = () => {
                 <Bell size={20} />
                 <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
               </button>
-              {/* Invite members shortcut */}
               {activeWorkspace && (
                 <button
                   onClick={() => navigate(`/workspace/${activeWorkspace._id}/invite`)}
@@ -357,30 +411,34 @@ const Dashboard = () => {
                 {filteredBoards.map((board, index) => (
                   <BoardCard
                     key={board._id}
-                    title={board.title}
-                    updatedAt={board.updatedAt}
+                    board={board}
                     index={index}
                     onClick={() => navigate(`/board/${board._id}`)}
+                    onToggleStar={handleToggleStar}
                   />
                 ))}
 
-                {/* Create board card */}
-                <div
-                  onClick={() => setShowBoardModal(true)}
-                  className="border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center p-8 hover:border-indigo-400 hover:bg-indigo-50/30 transition-all cursor-pointer group h-[190px]"
-                >
-                  <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                    <Plus className="text-indigo-600" size={20} />
+                {/* Create board card — hidden while viewing starred only */}
+                {!showStarredOnly && (
+                  <div
+                    onClick={() => setShowBoardModal(true)}
+                    className="border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center p-8 hover:border-indigo-400 hover:bg-indigo-50/30 transition-all cursor-pointer group h-[190px]"
+                  >
+                    <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                      <Plus className="text-indigo-600" size={20} />
+                    </div>
+                    <span className="text-sm font-bold text-slate-400 group-hover:text-indigo-600">
+                      Create new board
+                    </span>
                   </div>
-                  <span className="text-sm font-bold text-slate-400 group-hover:text-indigo-600">
-                    Create new board
-                  </span>
-                </div>
+                )}
               </div>
 
               {filteredBoards.length === 0 && boards.length > 0 && (
                 <p className="text-center text-slate-400 text-sm mt-12">
-                  No boards match "{searchQuery}"
+                  {showStarredOnly
+                    ? 'No starred boards yet. Click the star icon on a board to add it here.'
+                    : `No boards match "${searchQuery}"`}
                 </p>
               )}
             </div>

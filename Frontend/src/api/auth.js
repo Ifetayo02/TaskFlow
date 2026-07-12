@@ -19,3 +19,13 @@ export const forgotPasswordAPI = (data) =>
 
 export const resetPasswordAPI = (data) =>
   axiosInstance.post('/auth/reset-password', data);
+export const updateProfile = (data) =>
+  axiosInstance.patch('/auth/update-profile', data);
+
+export const changePassword = (data) =>
+  axiosInstance.patch('/auth/change-password', data);
+
+export const uploadAvatar = (formData) =>
+  axiosInstance.post('/auth/upload-avatar', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });

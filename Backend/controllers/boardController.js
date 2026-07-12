@@ -66,5 +66,19 @@ const deleteBoard = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+// PATCH /api/boards/:id/star — toggle starred status
+const toggleStar = async (req, res) => {
+  try {
+    const board = await Board.findById(req.params.id);
+    if (!board) {
+      return res.status(404).json({ message: 'Board not found' });
+    }
+    board.starred = !board.starred;
+    await board.save();
+    res.json(board);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-module.exports = { getBoard, createBoard, deleteBoard };
+module.exports = { getBoard, createBoard, deleteBoard, toggleStar };

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { X, Calendar, Tag, Trash2, Loader2 } from 'lucide-react';
+import { X, Calendar, Tag, Trash2, Loader2, UserCheck } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const LABELS = ['DESIGN', 'FEATURE', 'HIGH PRIORITY', 'BUG', 'RESEARCH'];
 const STATUSES = [
@@ -9,6 +10,8 @@ const STATUSES = [
 ];
 
 const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
+  const { user } = useAuth();
+
   const [form, setForm] = useState({
     title: task.title || '',
     description: task.description || '',
@@ -17,6 +20,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
     status: task.status || 'todo',
     priority: task.priority || 'medium',
   });
+  const [assignedTo, setAssignedTo] = useState(task.assignedTo?._id || null);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -26,7 +30,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
   const handleSave = async () => {
     try {
       setLoading(true);
-      await onUpdate(task._id, form);
+      await onUpdate(task._id, { ...form, assignedTo });
       onClose();
     } finally {
       setLoading(false);
@@ -39,6 +43,8 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
       onClose();
     }
   };
+
+  const isAssignedToMe = assignedTo === user?._id;
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -148,6 +154,24 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
                 className="w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-700 text-sm focus:border-indigo-500 outline-none transition-all"
               />
             </div>
+          </div>
+
+          {/* Assignee */}
+          <div>
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+              <UserCheck size={11} className="inline mr-1" />Assignee
+            </label>
+            <label className="flex items-center gap-3 cursor-pointer px-4 py-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
+              <input
+                type="checkbox"
+                checked={isAssignedToMe}
+                onChange={(e) => setAssignedTo(e.target.checked ? user._id : null)}
+                className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <span className="text-sm font-medium text-slate-700">
+                {isAssignedToMe ? `Assigned to you` : 'Unassigned — check to assign to yourself'}
+              </span>
+            </label>
           </div>
         </div>
 

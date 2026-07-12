@@ -15,3 +15,8 @@ export const moveTask = (id, data) =>
 
 export const deleteTask = (id) =>
   axiosInstance.delete(`/tasks/${id}`);
+export const getMyTasks = () =>
+  axiosInstance.get('/tasks/my-tasks');
+
+export const getBoardAnalytics = (boardId) =>
+  axiosInstance.get(`/tasks/analytics?boardId=${boardId}`);

@@ -89,5 +89,47 @@ const deleteTask = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+const getMyTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find({ assignedTo: req.user._id })
+      .populate('board', 'title')
+      .populate('assignedTo', 'name email')
+      .sort({ dueDate: 1 });
 
-module.exports = { getTasks, createTask, updateTask, moveTask, deleteTask };
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// GET /api/tasks/analytics?boardId=xxx — task stats for a board
+const getBoardAnalytics = async (req, res) => {
+  try {
+    const { boardId } = req.query;
+    const tasks = await Task.find({ board: boardId });
+
+    const byStatus = {
+      todo: tasks.filter((t) => t.status === 'todo').length,
+      inprogress: tasks.filter((t) => t.status === 'inprogress').length,
+      done: tasks.filter((t) => t.status === 'done').length,
+    };
+
+    const byPriority = {
+      low: tasks.filter((t) => t.priority === 'low').length,
+      medium: tasks.filter((t) => t.priority === 'medium').length,
+      high: tasks.filter((t) => t.priority === 'high').length,
+    };
+
+    const total = tasks.length;
+    const completionRate = total > 0 ? Math.round((byStatus.done / total) * 100) : 0;
+
+    const overdue = tasks.filter(
+      (t) => t.dueDate && new Date(t.dueDate) < new Date() && t.status !== 'done'
+    ).length;
+
+    res.json({ total, byStatus, byPriority, completionRate, overdue });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { getTasks, createTask, updateTask, moveTask, deleteTask, getMyTasks,getBoardAnalytics };

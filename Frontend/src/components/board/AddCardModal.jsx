@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import { X, Loader2 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const LABELS = ['DESIGN', 'FEATURE', 'HIGH PRIORITY', 'BUG', 'RESEARCH'];
 
 const AddCardModal = ({ status, onClose, onCreate }) => {
+  const { user } = useAuth();
   const [form, setForm] = useState({
     title: '',
     label: '',
     dueDate: '',
     priority: 'medium',
   });
+  const [assignToMe, setAssignToMe] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -22,7 +25,11 @@ const AddCardModal = ({ status, onClose, onCreate }) => {
     if (!form.title.trim()) return setError('Title is required.');
     try {
       setLoading(true);
-      await onCreate({ ...form, status });
+      await onCreate({
+        ...form,
+        status,
+        assignedTo: assignToMe ? user._id : null,
+      });
       onClose();
     } catch {
       setError('Failed to create task.');
@@ -42,9 +49,7 @@ const AddCardModal = ({ status, onClose, onCreate }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {error && (
-            <p className="text-sm text-red-500 font-medium">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-500 font-medium">{error}</p>}
 
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
@@ -106,6 +111,19 @@ const AddCardModal = ({ status, onClose, onCreate }) => {
               className="w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-700 text-sm outline-none transition-all"
             />
           </div>
+
+          {/* Assign to me toggle */}
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={assignToMe}
+              onChange={(e) => setAssignToMe(e.target.checked)}
+              className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+            />
+            <span className="text-sm font-medium text-slate-700">
+              Assign this task to me
+            </span>
+          </label>
 
           <div className="flex gap-3 pt-2">
             <button

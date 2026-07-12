@@ -9,6 +9,9 @@ import Dashboard from './pages/Dashboard';
 import BoardPage from './pages/KanbanBoard';
 import InviteMembers from './pages/Invite';  
 import AuthCallback from './pages/AuthCallback';
+import MyTasks from './pages/MyTasks'
+import BoardAnalytics from './pages/BoardAnalytics'
+import ProfileSettings from './pages/ProfileSettings';
 
 // inside Routes
 
@@ -21,6 +24,31 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
+<Route
+  path="/my-tasks"
+  element={
+    <ProtectedRoute>
+      <MyTasks />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/board/:boardId/analytics"
+  element={
+    <ProtectedRoute>
+      <BoardAnalytics />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/profile"
+  element={
+    <ProtectedRoute>
+      <ProfileSettings />
+    </ProtectedRoute>
+  }
+/>
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route
             path="/dashboard"
