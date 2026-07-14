@@ -2,6 +2,8 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const sendEmail = require('../utils/sendEmail');
+const { cloudinary } = require('../config/cloudinary');
 
 // helper to generate a token
 const generateToken = (id) => {
@@ -12,19 +14,12 @@ const generateToken = (id) => {
 const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-
-    // check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'Email already in use' });
     }
-
-    // hash the password — never store plain text
     const passwordHash = await bcrypt.hash(password, 12);
-
-    // create the user
     const user = await User.create({ name, email, passwordHash });
-
     res.status(201).json({
       _id: user._id,
       name: user.name,
@@ -40,58 +35,14 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    // find user by email
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
-
-    // compare the submitted password against the stored hash
     const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
-
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      token: generateToken(user._id),
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// GET /api/auth/me  (protected)
-const getMe = async (req, res) => {
-  res.json(req.user);
-};
-
-// POST /api/auth/google
-const googleAuth = async (req, res) => {
-  try {
-    const { name, email, avatar } = req.body;
-
-    if (!email) {
-      return res.status(400).json({ message: 'Email is required' });
-    }
-
-    // find or create the user
-    let user = await User.findOne({ email });
-
-    if (!user) {
-      // first time Google sign in — create account
-      user = await User.create({
-        name,
-        email,
-        passwordHash: 'GOOGLE_AUTH',
-        avatar: avatar || null,
-      });
-    }
-
-    // return your own JWT just like regular login
     res.json({
       _id: user._id,
       name: user.name,
@@ -104,28 +55,54 @@ const googleAuth = async (req, res) => {
   }
 };
 
+// GET /api/auth/me
+const getMe = async (req, res) => {
+  res.json(req.user);
+};
+
+// POST /api/auth/google
+const googleAuth = async (req, res) => {
+  try {
+    const { name, email, avatar } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({
+        name,
+        email,
+        passwordHash: 'GOOGLE_AUTH',
+        avatar: avatar || null,
+      });
+    }
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      token: generateToken(user._id),
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// POST /api/auth/forgot-password
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
-
     const user = await User.findOne({ email });
-
-    // always return success even if email doesn't exist
-    // this prevents email enumeration attacks
     if (!user) {
       return res.json({
         message: 'If that email exists you will receive a reset link shortly.',
       });
     }
-
-    // generate a reset token
     const resetToken = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-
-    // send reset email
     await sendEmail({
       to: email,
       subject: 'Reset your TaskFlow password',
@@ -152,7 +129,6 @@ const forgotPassword = async (req, res) => {
         </div>
       `,
     });
-
     res.json({
       message: 'If that email exists you will receive a reset link shortly.',
     });
@@ -161,33 +137,122 @@ const forgotPassword = async (req, res) => {
   }
 };
 
+// POST /api/auth/reset-password
 const resetPassword = async (req, res) => {
   try {
     const { token, password } = req.body;
-
     if (!password || password.length < 8) {
       return res.status(400).json({
         message: 'Password must be at least 8 characters.',
       });
     }
-
-    // verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id);
-
     if (!user) {
       return res.status(400).json({ message: 'Invalid or expired reset link.' });
     }
-
-    // update password
     user.passwordHash = await bcrypt.hash(password, 12);
     await user.save();
-
     res.json({ message: 'Password reset successfully. You can now sign in.' });
   } catch (error) {
-    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+    if (
+      error.name === 'JsonWebTokenError' ||
+      error.name === 'TokenExpiredError'
+    ) {
       return res.status(400).json({ message: 'Invalid or expired reset link.' });
     }
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// PATCH /api/auth/update-profile
+const updateProfile = async (req, res) => {
+  try {
+    const { name, email } = req.body;
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (email && email !== user.email) {
+      const exists = await User.findOne({ email });
+      if (exists) {
+        return res.status(400).json({ message: 'Email already in use.' });
+      }
+    }
+
+    user.name = name || user.name;
+    user.email = email || user.email;
+    await user.save();
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      token: generateToken(user._id),
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// PATCH /api/auth/change-password
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (user.passwordHash === 'GOOGLE_AUTH') {
+      return res.status(400).json({
+        message: 'Your account uses Google sign-in. Password change is not available.',
+      });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Current password is incorrect.' });
+    }
+
+    if (!newPassword || newPassword.length < 8) {
+      return res.status(400).json({
+        message: 'New password must be at least 8 characters.',
+      });
+    }
+
+    user.passwordHash = await bcrypt.hash(newPassword, 12);
+    await user.save();
+
+    res.json({ message: 'Password changed successfully.' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// POST /api/auth/upload-avatar
+const uploadAvatar = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded.' });
+    }
+
+    const user = await User.findById(req.user._id);
+
+    // delete old avatar from Cloudinary if it exists
+    if (user.avatar) {
+      const publicId = user.avatar.split('/').pop().split('.')[0];
+      await cloudinary.uploader.destroy(`taskflow/avatars/${publicId}`);
+    }
+
+    user.avatar = req.file.path;
+    await user.save();
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+    });
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
@@ -203,7 +268,3 @@ module.exports = {
   changePassword,
   uploadAvatar,
 };
-
-
-
-
