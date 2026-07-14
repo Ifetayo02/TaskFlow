@@ -192,7 +192,17 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { register, login, getMe, googleAuth, forgotPassword, resetPassword };
+module.exports = {
+  register,
+  login,
+  getMe,
+  googleAuth,
+  forgotPassword,
+  resetPassword,
+  updateProfile,
+  changePassword,
+  uploadAvatar,
+};
 
 
 
