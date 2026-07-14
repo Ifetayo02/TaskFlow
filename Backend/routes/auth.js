@@ -2,10 +2,17 @@ const express = require('express');
 const router = express.Router();
 
 const {
-  register, login, getMe, googleAuth,
-  forgotPassword, resetPassword,
-  updateProfile, changePassword, uploadAvatar,
+  register,
+  login,
+  getMe,
+  googleAuth,
+  forgotPassword,
+  resetPassword,
+  updateProfile,
+  changePassword,
+  uploadAvatar,
 } = require('../controllers/authController');
+const { protect } = require('../middleware/auth');
 const { upload } = require('../config/cloudinary');
 
 router.post('/register', register);
@@ -17,3 +24,5 @@ router.post('/reset-password', resetPassword);
 router.patch('/update-profile', protect, updateProfile);
 router.patch('/change-password', protect, changePassword);
 router.post('/upload-avatar', protect, upload.single('avatar'), uploadAvatar);
+
+module.exports = router;
