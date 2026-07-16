@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Calendar, Tag, Trash2, Loader2, UserCheck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { getBoardMembers } from '../../api/boards';
 
+// --- Constants ---
 const LABELS = ['DESIGN', 'FEATURE', 'HIGH PRIORITY', 'BUG', 'RESEARCH'];
 const STATUSES = [
   { value: 'todo', label: 'To Do' },
@@ -10,8 +12,15 @@ const STATUSES = [
 ];
 
 const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
+  // --- Hooks & Context ---
   const { user } = useAuth();
 
+  // --- Local State ---
+  const [loading, setLoading] = useState(false);
+  const [members, setMembers] = useState([]);
+  const [assignedTo, setAssignedTo] = useState(
+    task.assignedTo?._id || task.assignedTo || null
+  );
   const [form, setForm] = useState({
     title: task.title || '',
     description: task.description || '',
@@ -20,9 +29,17 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
     status: task.status || 'todo',
     priority: task.priority || 'medium',
   });
-  const [assignedTo, setAssignedTo] = useState(task.assignedTo?._id || null);
-  const [loading, setLoading] = useState(false);
 
+  // --- Effects ---
+  useEffect(() => {
+    if (task.board) {
+      getBoardMembers(task.board)
+        .then((res) => setMembers(res.data))
+        .catch(() => setMembers([]));
+    }
+  }, [task.board]);
+
+  // --- Handlers ---
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -44,11 +61,14 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
     }
   };
 
+  // --- Derived State ---
   const isAssignedToMe = assignedTo === user?._id;
 
+  // --- Render ---
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
+        
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-100">
           <h2 className="text-lg font-bold text-slate-900">Task Details</h2>
@@ -103,10 +123,13 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
                 className="w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-700 text-sm focus:border-indigo-500 outline-none transition-all bg-white"
               >
                 {STATUSES.map((s) => (
-                  <option key={s.value} value={s.value}>{s.label}</option>
+                  <option key={s.value} value={s.value}>
+                    {s.label}
+                  </option>
                 ))}
               </select>
             </div>
+            
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
                 Priority
@@ -124,11 +147,46 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
             </div>
           </div>
 
+          {/* Activity Log */}
+          {task.activity && task.activity.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+                Activity
+              </h3>
+              <div className="space-y-2">
+                {task.activity
+                  .slice()
+                  .reverse()
+                  .map((entry, i) => (
+                    <div key={i} className="flex items-start gap-2 text-xs text-slate-500">
+                      <div className="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600 flex-shrink-0 text-[10px]">
+                        {entry.user?.charAt(0).toUpperCase()}
+                      </div>
+                      <p>
+                        <span className="font-semibold text-slate-700">{entry.user}</span>{' '}
+                        {entry.action}
+                        <span className="ml-1 text-slate-400">
+                          ·{' '}
+                          {new Date(entry.createdAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </span>
+                      </p>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+
           {/* Row: Label + Due Date */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                <Tag size={11} className="inline mr-1" />Label
+                <Tag size={11} className="inline mr-1" />
+                Label
               </label>
               <select
                 name="label"
@@ -138,13 +196,17 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
               >
                 <option value="">No label</option>
                 {LABELS.map((l) => (
-                  <option key={l} value={l}>{l}</option>
+                  <option key={l} value={l}>
+                    {l}
+                  </option>
                 ))}
               </select>
             </div>
+            
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                <Calendar size={11} className="inline mr-1" />Due Date
+                <Calendar size={11} className="inline mr-1" />
+                Due Date
               </label>
               <input
                 type="date"
@@ -156,22 +218,26 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
             </div>
           </div>
 
-          {/* Assignee */}
+          {/* Assign To */}
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-              <UserCheck size={11} className="inline mr-1" />Assignee
+              Assign To
             </label>
-            <label className="flex items-center gap-3 cursor-pointer px-4 py-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
-              <input
-                type="checkbox"
-                checked={isAssignedToMe}
-                onChange={(e) => setAssignedTo(e.target.checked ? user._id : null)}
-                className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-              />
-              <span className="text-sm font-medium text-slate-700">
-                {isAssignedToMe ? `Assigned to you` : 'Unassigned — check to assign to yourself'}
-              </span>
-            </label>
+            <select
+              value={assignedTo || ''}
+              onChange={(e) => setAssignedTo(e.target.value || null)}
+              className="w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-700 text-sm focus:border-indigo-500 outline-none transition-all bg-white"
+            >
+              <option value="">Unassigned</option>
+              <option value={user?._id}>Me ({user?.name})</option>
+              {members
+                .filter((m) => m._id !== user?._id)
+                .map((m) => (
+                  <option key={m._id} value={m._id}>
+                    {m.name} ({m.email})
+                  </option>
+                ))}
+            </select>
           </div>
         </div>
 
@@ -183,6 +249,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
           >
             <Trash2 size={16} /> Delete task
           </button>
+          
           <div className="flex gap-3">
             <button
               onClick={onClose}
@@ -200,6 +267,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
             </button>
           </div>
         </div>
+        
       </div>
     </div>
   );

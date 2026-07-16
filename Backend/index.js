@@ -1,6 +1,12 @@
+const dotenv = require('dotenv');
+const path = require('path');
+
+// load .env.local first (real secrets), then .env (dummy fallback)
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local'), override: true });
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+
 const express = require('express');
 const http = require('http');
-const dotenv = require('dotenv');
 const cors = require('cors');
 
 const connectDB = require('./config/db');

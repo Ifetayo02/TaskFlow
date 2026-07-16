@@ -10,20 +10,31 @@ import {
   LogOut,
   X,
   Loader2,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../api/axiosInstance';
 import { toggleStarBoard } from '../api/boards';
+import { useTheme } from '../context/ThemeContext';
+import GlobalSearch from '../components/layout/GlobalSearch';
+
+const gridBg = {
+  backgroundColor: '#0f172a',
+  backgroundImage: `linear-gradient(rgba(99,102,241,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.05) 1px, transparent 1px)`,
+  backgroundSize: '32px 32px',
+};
 
 // ─── Sidebar Item ─────────────────────────────────────────────
 const SidebarItem = ({ icon: Icon, label, active = false, onClick }) => (
   <div
     onClick={onClick}
-    className={`flex items-center gap-3 px-6 py-3 cursor-pointer transition-colors ${active
+    className={`flex items-center gap-3 px-6 py-3 cursor-pointer transition-colors ${
+      active
         ? 'text-white border-r-4 border-indigo-500 bg-white/5'
         : 'text-slate-400 hover:text-white'
-      }`}
+    }`}
   >
     <Icon size={20} />
     <span className="text-sm font-medium">{label}</span>
@@ -52,27 +63,27 @@ const BoardCard = ({ board, index, onClick, onToggleStar }) => {
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all group cursor-pointer border border-slate-100 hover:-translate-y-1 relative"
+      className="bg-[#1e293b] rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:shadow-indigo-500/10 transition-all group cursor-pointer border border-white/5 hover:border-white/10 hover:-translate-y-1 relative"
     >
       <div className={`h-24 w-full bg-gradient-to-br ${gradient}`} />
 
       <button
         onClick={handleStarClick}
-        className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-all shadow-sm"
+        className="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-900/40 backdrop-blur-md flex items-center justify-center hover:bg-slate-900/60 transition-all shadow-sm border border-white/10"
         title={board.starred ? 'Unstar board' : 'Star board'}
       >
         <Star
           size={15}
-          className={board.starred ? 'fill-amber-400 text-amber-400' : 'text-slate-400'}
+          className={board.starred ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}
         />
       </button>
 
       <div className="p-5">
-        <h3 className="font-bold text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors">
+        <h3 className="font-bold text-white mb-1 group-hover:text-indigo-400 transition-colors">
           {board.title}
         </h3>
-        <p className="text-xs text-slate-400 flex items-center gap-1">
-          <span className="inline-block w-3 h-3 rounded-full border border-slate-200"></span>
+        <p className="text-xs text-slate-400 flex items-center gap-2">
+          <span className="inline-block w-2 h-2 rounded-full border border-slate-600 bg-slate-700"></span>
           {board.updatedAt
             ? `Last updated: ${new Date(board.updatedAt).toLocaleDateString()}`
             : 'Just created'}
@@ -84,21 +95,21 @@ const BoardCard = ({ board, index, onClick, onToggleStar }) => {
 
 // ─── Modal ────────────────────────────────────────────────────
 const Modal = ({ title, onClose, onSubmit, loading, children }) => (
-  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 relative">
+  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="bg-slate-900 border border-white/10 rounded-2xl shadow-xl w-full max-w-md p-8 relative">
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+        className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
       >
         <X size={20} />
       </button>
-      <h2 className="text-xl font-bold text-slate-900 mb-6">{title}</h2>
-      <form onSubmit={onSubmit} className="space-y-4">
+      <h2 className="text-xl font-bold text-white mb-6">{title}</h2>
+      <form onSubmit={onSubmit} className="space-y-4 text-slate-300">
         {children}
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all"
+          className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-900/50 mt-2"
         >
           {loading && <Loader2 size={16} className="animate-spin" />}
           {loading ? 'Creating...' : 'Create'}
@@ -112,6 +123,7 @@ const Modal = ({ title, onClose, onSubmit, loading, children }) => (
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { darkMode, toggleDarkMode } = useTheme();
 
   const [workspaces, setWorkspaces] = useState([]);
   const [boards, setBoards] = useState([]);
@@ -219,8 +231,8 @@ const Dashboard = () => {
 
   if (pageLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="flex items-center gap-3 text-slate-500">
+      <div className="min-h-screen flex items-center justify-center" style={gridBg}>
+        <div className="flex items-center gap-3 text-slate-400">
           <Loader2 className="animate-spin" size={24} />
           <span className="font-medium">Loading your workspaces...</span>
         </div>
@@ -229,11 +241,9 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col font-sans" style={gridBg}>
       <div className="flex flex-1">
-
-        {/* ── Sidebar ── */}
-        <aside className="w-64 bg-[#0F172A] text-white flex flex-col py-8 border-r border-slate-800 min-h-screen">
+        <aside className="w-64 bg-[#0F172A] text-white flex flex-col py-8 border-r border-white/10 min-h-screen">
           {/* Logo */}
           <div className="px-6 mb-8 flex items-center gap-2">
             <LayoutGrid className="text-indigo-500" />
@@ -289,7 +299,7 @@ const Dashboard = () => {
           </div>
 
           {/* Nav items */}
-          <div className="border-t border-slate-800 pt-4 space-y-1">
+          <div className="border-t border-white/10 pt-4 space-y-1">
             <SidebarItem
               icon={ClipboardList}
               label="My Tasks"
@@ -316,9 +326,16 @@ const Dashboard = () => {
           <div className="px-4 mt-6 space-y-3">
             <button
               onClick={() => setShowWorkspaceModal(true)}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-all shadow-lg shadow-indigo-900/20"
+              className="w-full bg-indigo-600 hover:bg-indigo-500 py-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-all shadow-lg shadow-indigo-900/20"
             >
               <Plus size={18} /> New Workspace
+            </button>
+            <button
+              onClick={toggleDarkMode}
+              className="w-full bg-white/5 hover:bg-white/10 py-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm text-slate-400 hover:text-white transition-all"
+            >
+              {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+              {darkMode ? 'Light Mode' : 'Dark Mode'}
             </button>
             <button
               onClick={handleLogout}
@@ -331,11 +348,10 @@ const Dashboard = () => {
 
         {/* ── Main Content ── */}
         <main className="flex-1 flex flex-col">
-
-          {/* Header */}
-          <header className="h-20 bg-white border-b border-slate-200 px-8 flex items-center justify-between sticky top-0 z-10">
+          {/* Header FIX: Removed hardcoded white backgrounds and mapped to transparent/dark styling */}
+          <header className="h-20 bg-transparent backdrop-blur-md border-b border-white/10 px-8 flex items-center justify-between sticky top-0 z-10">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">
+              <h1 className="text-2xl font-bold text-white">
                 {showStarredOnly
                   ? 'Starred Boards'
                   : activeWorkspace
@@ -350,24 +366,15 @@ const Dashboard = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Search boards..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-slate-100 border-none rounded-full pl-10 pr-4 py-2 text-sm w-56 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
-                />
-              </div>
-              <button className="relative p-2 text-slate-400 hover:text-slate-600 transition-colors">
+              <GlobalSearch />
+              <button className="relative p-2 text-slate-400 hover:text-white transition-colors">
                 <Bell size={20} />
-                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0F172A]"></span>
               </button>
               {activeWorkspace && (
                 <button
                   onClick={() => navigate(`/workspace/${activeWorkspace._id}/invite`)}
-                  className="flex items-center gap-2 border border-slate-200 hover:border-indigo-400 hover:text-indigo-600 text-slate-500 text-sm font-semibold px-4 py-2 rounded-xl transition-all"
+                  className="flex items-center gap-2 bg-white/5 border border-white/10 hover:border-indigo-400 hover:text-white text-slate-300 text-sm font-semibold px-4 py-2 rounded-xl transition-all"
                 >
                   <Users size={15} />
                   Members
@@ -378,9 +385,9 @@ const Dashboard = () => {
 
           {/* Error banner */}
           {error && (
-            <div className="mx-8 mt-6 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 font-medium flex justify-between">
+            <div className="mx-8 mt-6 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-400 font-medium flex justify-between">
               {error}
-              <button onClick={() => setError('')}>
+              <button onClick={() => setError('')} className="hover:text-red-300">
                 <X size={16} />
               </button>
             </div>
@@ -389,18 +396,18 @@ const Dashboard = () => {
           {/* Empty state */}
           {workspaces.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-              <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-4">
-                <LayoutGrid className="text-indigo-500" size={32} />
+              <div className="w-16 h-16 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl flex items-center justify-center mb-4">
+                <LayoutGrid className="text-indigo-400" size={32} />
               </div>
-              <h2 className="text-xl font-bold text-slate-900 mb-2">
+              <h2 className="text-xl font-bold text-white mb-2">
                 No workspaces yet
               </h2>
-              <p className="text-slate-500 text-sm mb-6 max-w-xs">
+              <p className="text-slate-400 text-sm mb-6 max-w-xs">
                 Create your first workspace to start organizing your boards and tasks.
               </p>
               <button
                 onClick={() => setShowWorkspaceModal(true)}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-all"
+                className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-indigo-900/50"
               >
                 <Plus size={18} /> Create Workspace
               </button>
@@ -418,16 +425,16 @@ const Dashboard = () => {
                   />
                 ))}
 
-                {/* Create board card — hidden while viewing starred only */}
+                {/* Create board card */}
                 {!showStarredOnly && (
                   <div
                     onClick={() => setShowBoardModal(true)}
-                    className="border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center p-8 hover:border-indigo-400 hover:bg-indigo-50/30 transition-all cursor-pointer group h-[190px]"
+                    className="border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center p-8 hover:border-indigo-400 hover:bg-indigo-500/5 transition-all cursor-pointer group h-[190px]"
                   >
-                    <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                      <Plus className="text-indigo-600" size={20} />
+                    <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                      <Plus className="text-indigo-400 group-hover:text-indigo-300" size={20} />
                     </div>
-                    <span className="text-sm font-bold text-slate-400 group-hover:text-indigo-600">
+                    <span className="text-sm font-bold text-slate-400 group-hover:text-indigo-400">
                       Create new board
                     </span>
                   </div>
@@ -446,30 +453,30 @@ const Dashboard = () => {
         </main>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 p-10 grid grid-cols-1 md:grid-cols-4 gap-8">
+      {/* Footer FIX: Matched footer to dark background */}
+      <footer className="bg-transparent border-t border-white/10 p-10 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="col-span-2">
-          <h4 className="text-xl font-bold mb-4">TaskFlow</h4>
-          <p className="text-sm text-slate-500 max-w-sm leading-relaxed">
+          <h4 className="text-xl font-bold text-white mb-4">TaskFlow</h4>
+          <p className="text-sm text-slate-400 max-w-sm leading-relaxed">
             © 2026 TaskFlow Inc. Precision engineering for high-velocity teams.
           </p>
         </div>
         <div>
-          <h5 className="text-sm font-bold text-indigo-600 mb-4 uppercase tracking-widest">
+          <h5 className="text-sm font-bold text-indigo-400 mb-4 uppercase tracking-widest">
             Product
           </h5>
-          <ul className="text-sm text-slate-600 space-y-3 font-medium">
-            <li className="hover:text-indigo-600 cursor-pointer">Features</li>
-            <li className="hover:text-indigo-600 cursor-pointer">Security</li>
+          <ul className="text-sm text-slate-400 space-y-3 font-medium">
+            <li className="hover:text-indigo-300 cursor-pointer transition-colors">Features</li>
+            <li className="hover:text-indigo-300 cursor-pointer transition-colors">Security</li>
           </ul>
         </div>
         <div>
-          <h5 className="text-sm font-bold text-indigo-600 mb-4 uppercase tracking-widest">
+          <h5 className="text-sm font-bold text-indigo-400 mb-4 uppercase tracking-widest">
             Company
           </h5>
-          <ul className="text-sm text-slate-600 space-y-3 font-medium">
-            <li className="hover:text-indigo-600 cursor-pointer">About</li>
-            <li className="hover:text-indigo-600 cursor-pointer">Careers</li>
+          <ul className="text-sm text-slate-400 space-y-3 font-medium">
+            <li className="hover:text-indigo-300 cursor-pointer transition-colors">About</li>
+            <li className="hover:text-indigo-300 cursor-pointer transition-colors">Careers</li>
           </ul>
         </div>
       </footer>
@@ -483,7 +490,7 @@ const Dashboard = () => {
           loading={modalLoading}
         >
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-400 mb-2">
               Workspace name
             </label>
             <input
@@ -492,7 +499,7 @@ const Dashboard = () => {
               onChange={(e) => setWorkspaceName(e.target.value)}
               placeholder="e.g. Marketing Team"
               autoFocus
-              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none text-slate-900 transition-all"
+              className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 outline-none text-white transition-all placeholder-slate-600"
             />
           </div>
         </Modal>
@@ -507,7 +514,7 @@ const Dashboard = () => {
           loading={modalLoading}
         >
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-400 mb-2">
               Board title
             </label>
             <input
@@ -516,7 +523,7 @@ const Dashboard = () => {
               onChange={(e) => setBoardTitle(e.target.value)}
               placeholder="e.g. Marketing Launch"
               autoFocus
-              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none text-slate-900 transition-all"
+              className="w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 outline-none text-white transition-all placeholder-slate-600"
             />
           </div>
         </Modal>

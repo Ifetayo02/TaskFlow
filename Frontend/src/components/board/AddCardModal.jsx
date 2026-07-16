@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Loader2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { getBoardMembers } from '../../api/boards';
 
 const LABELS = ['DESIGN', 'FEATURE', 'HIGH PRIORITY', 'BUG', 'RESEARCH'];
 
-const AddCardModal = ({ status, onClose, onCreate }) => {
+const AddCardModal = ({ status, boardId, onClose, onCreate }) => {
   const { user } = useAuth();
   const [form, setForm] = useState({
     title: '',
@@ -12,9 +13,18 @@ const AddCardModal = ({ status, onClose, onCreate }) => {
     dueDate: '',
     priority: 'medium',
   });
-  const [assignToMe, setAssignToMe] = useState(true);
+  const [assignedTo, setAssignedTo] = useState(user._id);
+  const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (boardId) {
+      getBoardMembers(boardId)
+        .then((res) => setMembers(res.data))
+        .catch(() => setMembers([]));
+    }
+  }, [boardId]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -25,11 +35,7 @@ const AddCardModal = ({ status, onClose, onCreate }) => {
     if (!form.title.trim()) return setError('Title is required.');
     try {
       setLoading(true);
-      await onCreate({
-        ...form,
-        status,
-        assignedTo: assignToMe ? user._id : null,
-      });
+      await onCreate({ ...form, status, assignedTo });
       onClose();
     } catch {
       setError('Failed to create task.');
@@ -112,18 +118,27 @@ const AddCardModal = ({ status, onClose, onCreate }) => {
             />
           </div>
 
-          {/* Assign to me toggle */}
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={assignToMe}
-              onChange={(e) => setAssignToMe(e.target.checked)}
-              className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-            />
-            <span className="text-sm font-medium text-slate-700">
-              Assign this task to me
-            </span>
-          </label>
+          {/* Assignee picker */}
+          <div>
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+              Assign To
+            </label>
+            <select
+              value={assignedTo}
+              onChange={(e) => setAssignedTo(e.target.value)}
+              className="w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-700 text-sm outline-none bg-white"
+            >
+              <option value="">Unassigned</option>
+              <option value={user._id}>Me ({user.name})</option>
+              {members
+                .filter((m) => m._id !== user._id)
+                .map((m) => (
+                  <option key={m._id} value={m._id}>
+                    {m.name} ({m.email})
+                  </option>
+                ))}
+            </select>
+          </div>
 
           <div className="flex gap-3 pt-2">
             <button

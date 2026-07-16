@@ -20,3 +20,5 @@ export const getMyTasks = () =>
 
 export const getBoardAnalytics = (boardId) =>
   axiosInstance.get(`/tasks/analytics?boardId=${boardId}`);
+export const searchTasks = (query) =>
+  axiosInstance.get(`/tasks/search?q=${query}`);

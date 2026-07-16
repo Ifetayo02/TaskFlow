@@ -8,17 +8,12 @@ import { useAuth } from '../context/AuthContext';
 const SignIn = () => {
   const navigate = useNavigate();
   const { login, user } = useAuth();
-  const {
-    signInWithGoogle,
-    loading: googleLoading,
-    error: googleError,
-  } = useGoogleAuth();
+  const { signInWithGoogle, loading: googleLoading, error: googleError } = useGoogleAuth();
 
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
   const isSubmitting = loading || googleLoading;
 
   useEffect(() => {
@@ -48,37 +43,52 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-6 font-sans">
-      <div className="w-full max-w-[440px] bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-10 md:p-12">
+    <div
+      className="min-h-screen flex flex-col items-center justify-center p-6 font-sans relative overflow-hidden"
+      style={{
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)',
+      }}
+    >
+      {/* Background glow blobs */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Logo and Greeting */}
+      {/* Card */}
+      <div
+        className="w-full max-w-[440px] rounded-[2rem] p-10 md:p-12 relative z-10"
+        style={{
+          background: 'rgba(255,255,255,0.07)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.12)',
+          boxShadow: '0 25px 50px rgba(0,0,0,0.4)',
+        }}
+      >
+        {/* Logo */}
         <div className="text-center mb-10">
           <div className="flex justify-center mb-6">
             <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
               <LayoutGrid className="w-5 h-5 text-white" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome back</h1>
-          <p className="text-slate-500 text-sm font-medium">Log in to your workspace</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Welcome back</h1>
+          <p className="text-slate-400 text-sm font-medium">Log in to your workspace</p>
         </div>
 
-        {/* Error Messages */}
+        {/* Errors */}
         {(error || googleError) && (
-          <div className="mb-6 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 font-medium">
+          <div className="mb-6 px-4 py-3 bg-red-500/20 border border-red-500/30 rounded-xl text-sm text-red-300 font-medium">
             {error || googleError}
           </div>
         )}
 
-        {/* Login Form */}
+        {/* Form */}
         <form className="space-y-6" onSubmit={handleSubmit}>
-
-          {/* Email */}
           <div className="space-y-2">
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+            <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               Email Address
             </label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
               <input
                 type="email"
                 name="email"
@@ -86,26 +96,30 @@ const SignIn = () => {
                 onChange={handleChange}
                 disabled={isSubmitting}
                 placeholder="name@company.com"
-                className="w-full pl-12 pr-5 py-4 bg-white border border-slate-200 rounded-xl focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all outline-none text-slate-900 placeholder:text-slate-400 font-medium disabled:opacity-60"
+                className="w-full pl-12 pr-5 py-4 rounded-xl outline-none font-medium transition-all disabled:opacity-60"
+                style={{
+                  background: 'rgba(255,255,255,0.08)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  color: 'white',
+                }}
               />
             </div>
           </div>
 
-          {/* Password */}
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                 Password
               </label>
               <Link
                 to="/forgot-password"
-                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 uppercase tracking-wider"
+                className="text-[11px] font-bold text-indigo-400 hover:text-indigo-300 uppercase tracking-wider transition-colors"
               >
                 Forgot password?
               </Link>
             </div>
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
@@ -113,12 +127,17 @@ const SignIn = () => {
                 onChange={handleChange}
                 disabled={isSubmitting}
                 placeholder="••••••••"
-                className="w-full pl-12 pr-12 py-4 bg-white border border-slate-200 rounded-xl focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all outline-none text-slate-900 font-medium disabled:opacity-60"
+                className="w-full pl-12 pr-12 py-4 rounded-xl outline-none font-medium transition-all disabled:opacity-60"
+                style={{
+                  background: 'rgba(255,255,255,0.08)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  color: 'white',
+                }}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -128,7 +147,7 @@ const SignIn = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-indigo-100 flex items-center justify-center gap-2"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-900/50"
           >
             {loading && <Loader2 size={18} className="animate-spin" />}
             {loading ? 'Signing in...' : 'Sign In'}
@@ -136,21 +155,26 @@ const SignIn = () => {
         </form>
 
         {/* Divider */}
-        <div className="relative my-10">
+        <div className="relative my-8">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-100"></div>
+            <div className="w-full" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }} />
           </div>
-          <div className="relative flex justify-center text-[10px] uppercase font-bold tracking-[0.15em] text-slate-400">
-            <span className="bg-white px-4">Or continue with</span>
+          <div className="relative flex justify-center text-[10px] uppercase font-bold tracking-[0.15em] text-slate-500">
+            <span className="px-4" style={{ background: 'transparent' }}>Or continue with</span>
           </div>
         </div>
 
-        {/* Google Button */}
+        {/* Google */}
         <button
           type="button"
           onClick={signInWithGoogle}
           disabled={isSubmitting}
-          className="w-full flex items-center justify-center gap-3 py-4 border border-slate-200 rounded-xl hover:bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed transition-all font-semibold text-slate-700"
+          className="w-full flex items-center justify-center gap-3 py-4 rounded-xl font-semibold transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+          style={{
+            background: 'rgba(255,255,255,0.08)',
+            border: '1px solid rgba(255,255,255,0.12)',
+            color: 'white',
+          }}
         >
           {googleLoading ? (
             <Loader2 size={18} className="animate-spin text-slate-400" />
@@ -165,24 +189,24 @@ const SignIn = () => {
           {googleLoading ? 'Signing in...' : 'Continue with Google'}
         </button>
 
-        <p className="mt-10 text-center text-sm text-slate-500 font-medium">
+        <p className="mt-8 text-center text-sm text-slate-400 font-medium">
           Don't have an account?{' '}
-          <Link to="/signup" className="text-indigo-600 font-bold hover:underline">
+          <Link to="/signup" className="text-indigo-400 font-bold hover:text-indigo-300 transition-colors">
             Sign up
           </Link>
         </p>
       </div>
 
-      {/* Status & Sub-links */}
-      <div className="mt-8 flex items-center gap-6 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+      {/* Status bar */}
+      <div className="mt-8 flex items-center gap-6 text-[11px] font-bold text-slate-500 uppercase tracking-widest relative z-10">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
           All systems operational
         </div>
-        <div className="h-4 w-px bg-slate-200"></div>
+        <div className="h-4 w-px bg-slate-700"></div>
         <div className="flex gap-4">
-          <a href="#" className="hover:text-slate-600">Privacy Policy</a>
-          <a href="#" className="hover:text-slate-600">Terms of Service</a>
+          <a href="#" className="hover:text-slate-300 transition-colors">Privacy</a>
+          <a href="#" className="hover:text-slate-300 transition-colors">Terms</a>
         </div>
       </div>
     </div>

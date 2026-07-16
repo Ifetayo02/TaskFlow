@@ -11,3 +11,9 @@ export const deleteBoard = (id) =>
   axiosInstance.delete(`/boards/${id}`);
 export const toggleStarBoard = (id) =>
   axiosInstance.patch(`/boards/${id}/star`);
+export const getBoardMembers = (boardId) =>
+  axiosInstance.get(`/boards/${boardId}/members`);
+export const updateBoardBackground = (id, bgColor) =>
+  axiosInstance.patch(`/boards/${id}/background`, { bgColor });
+
+

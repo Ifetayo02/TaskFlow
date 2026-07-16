@@ -8,11 +8,7 @@ import { useAuth } from '../context/AuthContext';
 const SignUp = () => {
   const navigate = useNavigate();
   const { login, user } = useAuth();
-  const {
-    signInWithGoogle,
-    loading: googleLoading,
-    error: googleError,
-  } = useGoogleAuth();
+  const { signInWithGoogle, loading: googleLoading, error: googleError } = useGoogleAuth();
 
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
@@ -48,73 +44,80 @@ const SignUp = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 font-sans">
-      <div className="w-full max-w-[480px] bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-10 md:p-14">
+  const inputStyle = {
+    background: 'rgba(255,255,255,0.08)',
+    border: '1px solid rgba(255,255,255,0.12)',
+    color: 'white',
+  };
 
+  return (
+    <div
+      className="min-h-screen flex flex-col items-center justify-center p-6 font-sans relative overflow-hidden"
+      style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)' }}
+    >
+      {/* Glow blobs */}
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Card */}
+      <div
+        className="w-full max-w-[480px] rounded-[2rem] p-10 md:p-14 relative z-10"
+        style={{
+          background: 'rgba(255,255,255,0.07)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.12)',
+          boxShadow: '0 25px 50px rgba(0,0,0,0.4)',
+        }}
+      >
         {/* Header */}
         <div className="text-center mb-10">
           <div className="flex items-center justify-center gap-2 mb-6">
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
               <ShieldCheck className="text-white w-5 h-5" />
             </div>
-            <span className="text-2xl font-bold tracking-tight text-slate-900">
-              TaskFlow
-            </span>
+            <span className="text-2xl font-bold tracking-tight text-white">TaskFlow</span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">
-            Create your account
-          </h1>
-          <p className="text-slate-500 text-sm">
-            Precision engineering for high-velocity teams.
-          </p>
+          <h1 className="text-3xl font-bold text-white mb-2">Create your account</h1>
+          <p className="text-slate-400 text-sm">Precision engineering for high-velocity teams.</p>
         </div>
 
-        {/* Error Message */}
+        {/* Error */}
         {(error || googleError) && (
-          <div className="mb-6 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 font-medium">
+          <div className="mb-6 px-4 py-3 bg-red-500/20 border border-red-500/30 rounded-xl text-sm text-red-300 font-medium">
             {error || googleError}
           </div>
         )}
 
         {/* Form */}
-        <form className="space-y-6" onSubmit={handleSubmit}>
-
-          {/* Full Name */}
+        <form className="space-y-5" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2 px-1">
-              Full Name
-            </label>
+            <label className="block text-sm font-semibold text-slate-400 mb-2 px-1">Full Name</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
               placeholder="John Doe"
-              className="w-full px-5 py-4 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none text-slate-900 placeholder:text-slate-400"
+              className="w-full px-5 py-4 rounded-xl outline-none transition-all placeholder:text-slate-600"
+              style={inputStyle}
             />
           </div>
 
-          {/* Email */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2 px-1">
-              Email
-            </label>
+            <label className="block text-sm font-semibold text-slate-400 mb-2 px-1">Email</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               placeholder="name@company.com"
-              className="w-full px-5 py-4 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none text-slate-900 placeholder:text-slate-400"
+              className="w-full px-5 py-4 rounded-xl outline-none transition-all placeholder:text-slate-600"
+              style={inputStyle}
             />
           </div>
 
-          {/* Password */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2 px-1">
-              Password
-            </label>
+            <label className="block text-sm font-semibold text-slate-400 mb-2 px-1">Password</label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -122,17 +125,18 @@ const SignUp = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="••••••••"
-                className="w-full px-5 py-4 pr-12 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none text-slate-900 placeholder:text-slate-400"
+                className="w-full px-5 py-4 pr-12 rounded-xl outline-none transition-all placeholder:text-slate-600"
+                style={inputStyle}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-            <p className="mt-2 text-[11px] text-slate-400 px-1">
+            <p className="mt-2 text-[11px] text-slate-500 px-1">
               Minimum 8 characters with a mix of letters and numbers.
             </p>
           </div>
@@ -140,38 +144,37 @@ const SignUp = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 group transition-all shadow-lg shadow-indigo-200"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 group transition-all shadow-lg shadow-indigo-900/50"
           >
             {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Creating account...
-              </>
+              <><Loader2 className="w-4 h-4 animate-spin" />Creating account...</>
             ) : (
-              <>
-                Sign Up
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </>
+              <>Sign Up<ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></>
             )}
           </button>
         </form>
 
         {/* Divider */}
-        <div className="relative my-10">
+        <div className="relative my-8">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-100"></div>
+            <div className="w-full" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }} />
           </div>
-          <div className="relative flex justify-center text-xs uppercase font-bold tracking-widest text-slate-400">
-            <span className="bg-white px-4">or continue with</span>
+          <div className="relative flex justify-center text-xs uppercase font-bold tracking-widest text-slate-500">
+            <span className="px-4">or continue with</span>
           </div>
         </div>
 
-        {/* Google Button */}
+        {/* Google */}
         <button
           type="button"
           onClick={signInWithGoogle}
           disabled={googleLoading}
-          className="w-full flex items-center justify-center gap-3 py-4 border border-slate-200 rounded-xl hover:bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed transition-all font-semibold text-slate-700"
+          className="w-full flex items-center justify-center gap-3 py-4 rounded-xl font-semibold transition-all disabled:opacity-60"
+          style={{
+            background: 'rgba(255,255,255,0.08)',
+            border: '1px solid rgba(255,255,255,0.12)',
+            color: 'white',
+          }}
         >
           {googleLoading ? (
             <Loader2 className="w-5 h-5 animate-spin text-slate-400" />
@@ -186,32 +189,21 @@ const SignUp = () => {
           {googleLoading ? 'Signing in...' : 'Continue with Google'}
         </button>
 
-        <p className="mt-10 text-center text-sm text-slate-500 font-medium">
+        <p className="mt-8 text-center text-sm text-slate-400 font-medium">
           Already have an account?{' '}
-          <Link to="/signin" className="text-indigo-600 font-bold hover:underline">
+          <Link to="/signin" className="text-indigo-400 font-bold hover:text-indigo-300 transition-colors">
             Sign in
           </Link>
         </p>
       </div>
 
-      {/* Trust Badges */}
-      <div className="mt-8 flex gap-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+      {/* Trust badges */}
+      <div className="mt-8 flex gap-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest relative z-10">
         <div className="flex items-center gap-1.5">
           <Lock className="w-3 h-3" /> Secure AES-256
         </div>
         <div className="flex items-center gap-1.5">
           <ShieldCheck className="w-3 h-3" /> GDPR Compliant
-        </div>
-      </div>
-
-      <div className="mt-12 text-center text-xs text-slate-400">
-        <p className="mb-4">
-          © 2026 TaskFlow Inc. Precision engineering for high-velocity teams.
-        </p>
-        <div className="flex justify-center gap-6 font-semibold">
-          <a href="#" className="hover:text-slate-600">Privacy</a>
-          <a href="#" className="hover:text-slate-600">Terms</a>
-          <a href="#" className="hover:text-slate-600">Contact</a>
         </div>
       </div>
     </div>

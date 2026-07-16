@@ -81,4 +81,35 @@ const toggleStar = async (req, res) => {
   }
 };
 
-module.exports = { getBoard, createBoard, deleteBoard, toggleStar };
+// GET /api/boards/:id/members
+const getBoardMembers = async (req, res) => {
+  try {
+    const board = await Board.findById(req.params.id)
+      .populate('members', 'name email avatar');
+    if (!board) return res.status(404).json({ message: 'Board not found' });
+    res.json(board.members);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// PATCH /api/boards/:id/background
+const updateBackground = async (req, res) => {
+  try {
+    const { bgColor } = req.body;
+    const board = await Board.findByIdAndUpdate(
+      req.params.id,
+      { bgColor },
+      { new: true }
+    );
+    if (!board) return res.status(404).json({ message: 'Board not found' });
+    res.json(board);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  getBoard, createBoard, deleteBoard,
+  toggleStar, getBoardMembers, updateBackground,
+};
+

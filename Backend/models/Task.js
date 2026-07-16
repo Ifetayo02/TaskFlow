@@ -56,6 +56,13 @@ const taskSchema = new mongoose.Schema(
         checked: { type: Boolean, default: false },
       },
     ],
+    activity: [
+  {
+    user: { type: String },
+    action: { type: String },
+    createdAt: { type: Date, default: Date.now },
+  },
+],
     comments: [
       {
         author: { type: String },
