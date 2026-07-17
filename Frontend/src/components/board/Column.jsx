@@ -13,7 +13,7 @@ const Column = ({ column, tasks, onAddCard, onCardClick }) => {
   const { setNodeRef } = useDroppable({ id: column.status });
 
   return (
-    <div className="flex flex-col w-72 flex-shrink-0">
+    <div className="flex flex-col w-64 md:w-72 shrink-0">
       {/* Column Header */}
       <div className="flex items-center justify-between px-3 py-3 mb-3">
         <div className="flex items-center gap-2">

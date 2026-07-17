@@ -88,12 +88,22 @@ const BoardAnalytics = () => {
           </div>
         </header>
 
-        <div className="flex-1 p-8 max-w-3xl w-full mx-auto">
+        {/* was: p-8 */}
+        <div className="flex-1 p-4 md:p-8 max-w-3xl w-full mx-auto">
           {/* Top stats */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
+          {/* was: grid grid-cols-3 */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
             <StatCard label="Total Tasks" value={stats.total} />
-            <StatCard label="Completion Rate" value={`${stats.completionRate}%`} color="text-indigo-400" />
-            <StatCard label="Overdue" value={stats.overdue} color={stats.overdue > 0 ? 'text-red-400' : 'text-white'} />
+            <StatCard
+              label="Completion Rate"
+              value={`${stats.completionRate}%`}
+              color="text-indigo-400"
+            />
+            <StatCard
+              label="Overdue"
+              value={stats.overdue}
+              color={stats.overdue > 0 ? 'text-red-400' : 'text-white'}
+            />
           </div>
 
           {/* Overdue warning */}

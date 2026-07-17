@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, Tag, Trash2, Loader2, UserCheck } from 'lucide-react';
+import { X, Calendar, Tag, Trash2, Loader2, UserCheck,Clock } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getBoardMembers } from '../../api/boards';
 
@@ -82,6 +82,18 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
 
         {/* Modal Body */}
         <div className="p-6 space-y-5">
+            {task.createdAt && (
+  <p className="text-xs text-slate-500 mb-4 flex items-center gap-1">
+    <Clock size={11} />
+    Created {new Date(task.createdAt).toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })}
+  </p>
+)}
           {/* Title */}
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">

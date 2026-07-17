@@ -10,14 +10,19 @@ import {
   LogOut,
   X,
   Loader2,
-  Sun,
-  Moon,
+  Menu,
 } from 'lucide-react';
+
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../api/axiosInstance';
 import { toggleStarBoard } from '../api/boards';
-import { useTheme } from '../context/ThemeContext';
+// add to imports
+
+
+// add state
+
+
 import GlobalSearch from '../components/layout/GlobalSearch';
 
 const gridBg = {
@@ -123,7 +128,7 @@ const Modal = ({ title, onClose, onSubmit, loading, children }) => (
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const { darkMode, toggleDarkMode } = useTheme();
+
 
   const [workspaces, setWorkspaces] = useState([]);
   const [boards, setBoards] = useState([]);
@@ -132,6 +137,7 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeWorkspace, setActiveWorkspace] = useState(null);
   const [showStarredOnly, setShowStarredOnly] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // modals
   const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
@@ -243,7 +249,25 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen flex flex-col font-sans" style={gridBg}>
       <div className="flex flex-1">
-        <aside className="w-64 bg-[#0F172A] text-white flex flex-col py-8 border-r border-white/10 min-h-screen">
+        {/* Mobile overlay */}
+{sidebarOpen && (
+  <div
+    className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+    onClick={() => setSidebarOpen(false)}
+  />
+)}
+       <aside
+  className={`fixed lg:relative inset-y-0 left-0 z-50 w-64 bg-[#0F172A] text-white flex flex-col py-8 border-r border-slate-800 min-h-screen transition-transform duration-300 ${
+    sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+  }`}
+>
+  {/* close button — mobile only */}
+  <button
+    onClick={() => setSidebarOpen(false)}
+    className="absolute top-4 right-4 text-slate-400 hover:text-white lg:hidden"
+  >
+    <X size={20} />
+  </button>
           {/* Logo */}
           <div className="px-6 mb-8 flex items-center gap-2">
             <LayoutGrid className="text-indigo-500" />
@@ -331,13 +355,6 @@ const Dashboard = () => {
               <Plus size={18} /> New Workspace
             </button>
             <button
-              onClick={toggleDarkMode}
-              className="w-full bg-white/5 hover:bg-white/10 py-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm text-slate-400 hover:text-white transition-all"
-            >
-              {darkMode ? <Sun size={16} /> : <Moon size={16} />}
-              {darkMode ? 'Light Mode' : 'Dark Mode'}
-            </button>
-            <button
               onClick={handleLogout}
               className="w-full bg-white/5 hover:bg-white/10 py-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm text-slate-400 hover:text-white transition-all"
             >
@@ -350,37 +367,47 @@ const Dashboard = () => {
         <main className="flex-1 flex flex-col">
           {/* Header FIX: Removed hardcoded white backgrounds and mapped to transparent/dark styling */}
           <header className="h-20 bg-transparent backdrop-blur-md border-b border-white/10 px-8 flex items-center justify-between sticky top-0 z-10">
-            <div>
-              <h1 className="text-2xl font-bold text-white">
-                {showStarredOnly
-                  ? 'Starred Boards'
-                  : activeWorkspace
-                    ? activeWorkspace.name
-                    : 'My Workspaces'}
-              </h1>
-              {activeWorkspace && (
-                <p className="text-xs text-slate-400 mt-0.5">
-                  {filteredBoards.length} board{filteredBoards.length !== 1 ? 's' : ''}
-                </p>
-              )}
-            </div>
+  <div className="flex items-center gap-4">
+    {/* Hamburger — mobile only */}
+    <button
+      onClick={() => setSidebarOpen(true)}
+      className="lg:hidden text-slate-400 hover:text-white transition-colors"
+    >
+      <Menu size={22} />
+    </button>
 
-            <div className="flex items-center gap-4">
-              <GlobalSearch />
-              <button className="relative p-2 text-slate-400 hover:text-white transition-colors">
-                <Bell size={20} />
-                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0F172A]"></span>
-              </button>
-              {activeWorkspace && (
-                <button
-                  onClick={() => navigate(`/workspace/${activeWorkspace._id}/invite`)}
-                  className="flex items-center gap-2 bg-white/5 border border-white/10 hover:border-indigo-400 hover:text-white text-slate-300 text-sm font-semibold px-4 py-2 rounded-xl transition-all"
-                >
-                  <Users size={15} />
-                  Members
-                </button>
-              )}
-            </div>
+    <div>
+      <h1 className="text-xl lg:text-2xl font-bold text-white">
+        {showStarredOnly ? 'Starred Boards' : activeWorkspace ? activeWorkspace.name : 'My Workspaces'}
+      </h1>
+      {activeWorkspace && (
+        <p className="text-xs text-slate-500 mt-0.5">
+          {filteredBoards.length} board{filteredBoards.length !== 1 ? 's' : ''}
+        </p>
+      )}
+    </div>
+  </div>
+
+  <div className="flex items-center gap-3">
+    {/* Hide search on small screens */}
+    <div className="hidden md:block">
+      <GlobalSearch />
+    </div>
+    <button className="relative p-2 text-slate-500 hover:text-white transition-colors">
+      <Bell size={20} />
+      <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-slate-900"></span>
+    </button>
+    {activeWorkspace && (
+      <button
+        onClick={() => navigate(`/workspace/${activeWorkspace._id}/invite`)}
+        className="hidden sm:flex items-center gap-2 text-slate-400 hover:text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all"
+        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+      >
+        <Users size={15} />
+        <span>Members</span>
+      </button>
+    )}
+  </div>
           </header>
 
           {/* Error banner */}

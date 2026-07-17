@@ -1,7 +1,7 @@
 // client/src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import { ThemeProvider } from './context/ThemeContext';
+
 import ProtectedRoute from './components/layout/ProtectedRoute';
 
 import LandingPage from './pages/LandingPage';
@@ -20,7 +20,7 @@ import ResetPassword from './pages/ResetPassword';
 function App() {
   return (
     <BrowserRouter>
-      <ThemeProvider>
+  
         <AuthProvider>
           <Routes>
             {/* ── Public routes ── */}
@@ -85,7 +85,6 @@ function App() {
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </AuthProvider>
-      </ThemeProvider>
     </BrowserRouter>
   );
 }

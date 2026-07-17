@@ -1,4 +1,8 @@
-import { Calendar } from 'lucide-react';
+
+import { Calendar, Clock } from 'lucide-react';
+
+// add this below the due date section inside the card
+
 
 const labelColors = {
   DESIGN: 'bg-blue-100 text-blue-700',
@@ -54,6 +58,17 @@ const TaskCard = ({ task, onClick }) => {
             })}
           </div>
         )}
+          {task.createdAt && (
+  <div className="flex items-center gap-1 text-[10px] text-slate-500 mt-1">
+    <Clock size={10} />
+    Created {new Date(task.createdAt).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })}
+  </div>
+)}
       </div>
     </div>
   );

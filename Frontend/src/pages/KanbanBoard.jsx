@@ -50,14 +50,10 @@ const BoardPage = () => {
   const [activeTask, setActiveTask] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
   const [addCardStatus, setAddCardStatus] = useState(null);
-
-  // board background color
   const [bgColor, setBgColor] = useState('#1e293b');
   const [showColorPicker, setShowColorPicker] = useState(false);
-  const colorPickerRef = useRef(null);
-
-  // board star state
   const [starred, setStarred] = useState(false);
+  const colorPickerRef = useRef(null);
 
   const { emit, on, off } = useSocket(boardId);
 
@@ -84,31 +80,27 @@ const BoardPage = () => {
     fetchTasks();
   }, [boardId]);
 
-  // ── socket listeners for real-time events
+  // ── socket listeners
   useEffect(() => {
     on('task_moved', ({ taskId, status, position }) => {
       setTasks((prev) =>
         prev.map((t) => (t._id === taskId ? { ...t, status, position } : t))
       );
     });
-
     on('task_created', ({ task }) => {
       setTasks((prev) => {
         if (prev.find((t) => t._id === task._id)) return prev;
         return [...prev, task];
       });
     });
-
     on('task_updated', ({ task }) => {
       setTasks((prev) =>
         prev.map((t) => (t._id === task._id ? task : t))
       );
     });
-
     on('task_deleted', ({ taskId }) => {
       setTasks((prev) => prev.filter((t) => t._id !== taskId));
     });
-
     return () => {
       off('task_moved');
       off('task_created');
@@ -117,7 +109,6 @@ const BoardPage = () => {
     };
   }, [boardId]);
 
-  // ── fetch board
   const fetchBoard = async () => {
     try {
       const res = await axiosInstance.get(`/boards/${boardId}`);
@@ -129,7 +120,6 @@ const BoardPage = () => {
     }
   };
 
-  // ── fetch tasks
   const fetchTasks = async () => {
     try {
       setLoading(true);
@@ -142,11 +132,9 @@ const BoardPage = () => {
     }
   };
 
-  // ── get tasks per column
   const getColumnTasks = (status) =>
     tasks.filter((t) => t.status === status);
 
-  // ── create task
   const handleCreateTask = async (formData) => {
     try {
       const res = await axiosInstance.post('/tasks', {
@@ -161,7 +149,6 @@ const BoardPage = () => {
     }
   };
 
-  // ── update task
   const handleUpdateTask = async (taskId, formData) => {
     try {
       const res = await axiosInstance.patch(`/tasks/${taskId}`, formData);
@@ -174,7 +161,6 @@ const BoardPage = () => {
     }
   };
 
-  // ── delete task
   const handleDeleteTask = async (taskId) => {
     try {
       await axiosInstance.delete(`/tasks/${taskId}`);
@@ -185,7 +171,6 @@ const BoardPage = () => {
     }
   };
 
-  // ── toggle board star
   const handleToggleStar = async () => {
     try {
       const res = await toggleStarBoard(boardId);
@@ -195,7 +180,6 @@ const BoardPage = () => {
     }
   };
 
-  // ── change board background color
   const handleColorChange = async (color) => {
     setBgColor(color);
     setShowColorPicker(false);
@@ -206,28 +190,23 @@ const BoardPage = () => {
     }
   };
 
-  // ── drag start
   const handleDragStart = (event) => {
     const task = tasks.find((t) => t._id === event.active.id);
     setActiveTask(task);
   };
 
-  // ── drag end
   const handleDragEnd = async (event) => {
     const { active, over } = event;
     setActiveTask(null);
-
     if (!over) return;
 
     const activeTaskId = active.id;
     const overId = over.id;
-
     const draggedTask = tasks.find((t) => t._id === activeTaskId);
     if (!draggedTask) return;
 
     const isColumn = COLUMNS.some((c) => c.status === overId);
 
-    // dropped on a different column
     if (isColumn && draggedTask.status !== overId) {
       setTasks((prev) =>
         prev.map((t) =>
@@ -247,7 +226,6 @@ const BoardPage = () => {
       return;
     }
 
-    // dropped on another card in the same column — reorder
     const overTask = tasks.find((t) => t._id === overId);
     if (overTask && draggedTask.status === overTask.status) {
       const columnTasks = getColumnTasks(draggedTask.status);
@@ -263,7 +241,10 @@ const BoardPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#1e293b] flex items-center justify-center">
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: bgColor }}
+      >
         <div className="flex items-center gap-3 text-slate-400">
           <Loader2 className="animate-spin" size={24} />
           <span>Loading board...</span>
@@ -279,35 +260,36 @@ const BoardPage = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
 
         {/* ── Top Bar ── */}
-        <header className="h-14 bg-black/30 backdrop-blur-sm border-b border-white/10 flex items-center justify-between px-6 flex-shrink-0">
-          <div className="flex items-center gap-4">
+        <header className="h-auto min-h-14 bg-black/30 backdrop-blur-sm border-b border-white/10 flex flex-wrap items-center justify-between px-4 md:px-6 py-3 gap-3 flex-shrink-0">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/dashboard')}
               className="text-slate-400 hover:text-white transition-colors"
             >
               <ArrowLeft size={18} />
             </button>
-            <h1 className="text-white font-bold text-lg">
+            <h1 className="text-white font-bold text-base md:text-lg truncate max-w-[150px] md:max-w-none">
               {board?.title || 'Board'}
             </h1>
-            {/* Star toggle */}
             <button
               onClick={handleToggleStar}
-              className="transition-colors"
+              className="transition-colors flex-shrink-0"
               title={starred ? 'Unstar board' : 'Star board'}
             >
               <Star
                 size={16}
-                className={starred
-                  ? 'fill-amber-400 text-amber-400'
-                  : 'text-slate-500 hover:text-amber-400'}
+                className={
+                  starred
+                    ? 'fill-amber-400 text-amber-400'
+                    : 'text-slate-500 hover:text-amber-400'
+                }
               />
             </button>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Member avatars — real board members */}
-            <div className="flex -space-x-2">
+          <div className="flex items-center gap-2 md:gap-3">
+            {/* Member avatars — hidden on very small screens */}
+            <div className="hidden sm:flex -space-x-2">
               {board?.members?.slice(0, 3).map((member, i) => (
                 <div
                   key={member._id || i}
@@ -335,25 +317,25 @@ const BoardPage = () => {
             {/* Invite button */}
             <button
               onClick={() => navigate(`/workspace/${board?.workspace}/invite`)}
-              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition-all"
+              className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition-all"
             >
-              <UserPlus size={14} />
-              Invite
+              <UserPlus size={13} />
+              <span className="hidden sm:inline">Invite</span>
             </button>
 
             {/* Color picker */}
             <div ref={colorPickerRef} className="relative">
               <button
                 onClick={() => setShowColorPicker(!showColorPicker)}
-                className="text-slate-400 hover:text-white transition-colors"
+                className="text-slate-400 hover:text-white transition-colors p-1"
                 title="Change board color"
               >
-                <Palette size={18} />
+                <Palette size={16} />
               </button>
 
               {showColorPicker && (
-                <div className="absolute right-0 top-9 bg-white rounded-2xl shadow-xl border border-slate-100 p-4 z-50 w-52">
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+                <div className="absolute right-0 top-9 bg-slate-900 rounded-2xl shadow-xl border border-white/10 p-4 z-50 w-52">
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
                     Board Color
                   </p>
                   <div className="grid grid-cols-4 gap-2">
@@ -364,7 +346,7 @@ const BoardPage = () => {
                         title={c.label}
                         className={`w-10 h-10 rounded-xl border-2 transition-all ${
                           bgColor === c.value
-                            ? 'border-indigo-500 scale-110'
+                            ? 'border-indigo-400 scale-110'
                             : 'border-transparent hover:scale-105'
                         }`}
                         style={{ backgroundColor: c.value }}
@@ -375,26 +357,29 @@ const BoardPage = () => {
               )}
             </div>
 
-            {/* Settings → profile */}
+            {/* Settings */}
             <button
               onClick={() => navigate('/profile')}
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-slate-400 hover:text-white transition-colors p-1"
               title="Settings"
             >
-              <Settings size={18} />
+              <Settings size={16} />
             </button>
           </div>
         </header>
 
         {/* ── Kanban Canvas ── */}
-        <div className="flex-1 overflow-x-auto p-6">
+        <div className="flex-1 overflow-x-auto overflow-y-auto p-4 md:p-6">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCorners}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
           >
-            <div className="flex gap-5 h-full items-start">
+            <div
+              className="flex gap-4 md:gap-5 items-start"
+              style={{ minWidth: 'max-content' }}
+            >
               {COLUMNS.map((column) => (
                 <Column
                   key={column.status}
@@ -405,7 +390,7 @@ const BoardPage = () => {
                 />
               ))}
 
-              <div className="w-72 flex-shrink-0 border-2 border-dashed border-white/20 rounded-xl h-16 flex items-center justify-center text-white/40 hover:border-white/40 hover:text-white/60 transition-all cursor-pointer text-sm font-medium">
+              <div className="w-64 md:w-72 flex-shrink-0 border-2 border-dashed border-white/20 rounded-xl h-16 flex items-center justify-center text-white/40 hover:border-white/40 hover:text-white/60 transition-all cursor-pointer text-sm font-medium">
                 + Add list
               </div>
             </div>
