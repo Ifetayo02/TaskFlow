@@ -12,7 +12,7 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const initSocket = require('./config/socket');
 const errorHandler = require('./middleware/errorHandler');
-// const startDeadlineChecker = require('./utils/deadlineChecker');
+const startDeadlineChecker = require('./utils/deadlineChecker');
 
 dotenv.config();
 connectDB();
@@ -50,4 +50,4 @@ server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-// startDeadlineChecker();
+startDeadlineChecker();
