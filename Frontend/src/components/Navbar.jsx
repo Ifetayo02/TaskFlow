@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import logo from '../assets/Images/logo.png';
 import { useNavigate } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -29,11 +31,11 @@ const Navbar = () => {
         {/* Logo */}
         <div className="flex items-center gap-2 font-bold text-xl tracking-tight text-white">
           <img src={logo} alt="TaskFlow Logo" width="36" height="36" />
-          TaskFlow
+          <span className="hidden sm:inline">TaskFlow</span>
         </div>
 
-        {/* Auth buttons only */}
-        <div className="flex items-center gap-3">
+        {/* Desktop auth buttons */}
+        <div className="hidden sm:flex items-center gap-3">
           <button
             onClick={() => navigate('/signin')}
             className="text-sm font-semibold text-slate-400 hover:text-white transition-colors px-4 py-2 rounded-xl"
@@ -47,6 +49,26 @@ const Navbar = () => {
           <button
             onClick={() => navigate('/signup')}
             className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-lg shadow-indigo-900/50"
+          >
+            Get Started
+          </button>
+        </div>
+
+        {/* Mobile — show both buttons inline (no hamburger needed since we only have 2 buttons) */}
+        <div className="flex sm:hidden items-center gap-2">
+          <button
+            onClick={() => navigate('/signin')}
+            className="text-xs font-bold text-slate-400 hover:text-white transition-colors px-3 py-2 rounded-lg"
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.08)',
+            }}
+          >
+            Log In
+          </button>
+          <button
+            onClick={() => navigate('/signup')}
+            className="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-lg text-xs font-bold transition-all"
           >
             Get Started
           </button>
