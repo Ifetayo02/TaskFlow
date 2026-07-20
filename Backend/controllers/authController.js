@@ -140,8 +140,10 @@ const forgotPassword = async (req, res) => {
       message: 'If that email exists you will receive a reset link shortly.',
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  console.error('Forgot password error:', error.message);
+  console.error('Full error:', error);
+  res.status(500).json({ message: error.message });
+}
 };
 
 // POST /api/auth/reset-password
