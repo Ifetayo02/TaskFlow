@@ -4,12 +4,15 @@ const nodemailer = require('nodemailer');
 const sendEmail = async ({ to, subject, html }) => {
   try {
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+  host: 'smtp.gmail.com', // Use explicitly instead of service: 'gmail'
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+  family: 4, // This specifically forces Nodemailer to use IPv4
+});
 
     const info = await transporter.sendMail({
       from: `"TaskFlow" <${process.env.EMAIL_USER}>`,
