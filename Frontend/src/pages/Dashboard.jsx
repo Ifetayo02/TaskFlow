@@ -393,10 +393,6 @@ const Dashboard = () => {
     <div className="hidden md:block">
       <GlobalSearch />
     </div>
-    <button className="relative p-2 text-slate-500 hover:text-white transition-colors">
-      <Bell size={20} />
-      <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-slate-900"></span>
-    </button>
     {activeWorkspace && (
       <button
         onClick={() => navigate(`/workspace/${activeWorkspace._id}/invite`)}

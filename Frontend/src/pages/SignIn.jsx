@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, LayoutGrid, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, LayoutGrid, Loader2, Eye, EyeOff,ArrowLeft } from 'lucide-react';
 import { loginUser } from '../api/auth';
 import useGoogleAuth from '../hooks/useGoogleAuth';
 import { useAuth } from '../context/AuthContext';
@@ -52,7 +52,16 @@ const SignIn = () => {
       {/* Background glow blobs */}
       {/* <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" /> */}
-
+      {/* Back to home link */}
+<div className="w-full max-w-[480px] mb-4 relative z-10">
+  <button
+    onClick={() => navigate('/')}
+    className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium"
+  >
+    <ArrowLeft size={16} />
+    Back to home
+  </button>
+</div>
       {/* Card */}
       <div
         className="w-full max-w-[440px] rounded-[2rem] p-10 md:p-12 relative z-10"
