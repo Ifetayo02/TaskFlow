@@ -1,28 +1,24 @@
 // server/utils/sendEmail.js
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async ({ to, subject, html }) => {
   try {
-    const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com', // Use explicitly instead of service: 'gmail'
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  family: 4, // This specifically forces Nodemailer to use IPv4
-});
-
-    const info = await transporter.sendMail({
-      from: `"TaskFlow" <${process.env.EMAIL_USER}>`,
+    const { data, error } = await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
       to,
       subject,
       html,
     });
 
-    console.log(`Email sent to ${to}: ${info.messageId}`);
-    return info;
+    if (error) {
+      console.error('Resend error:', error);
+      throw new Error(error.message);
+    }
+
+    console.log(`Email sent to ${to}: ${data.id}`);
+    return data;
   } catch (error) {
     console.error(`Failed to send email to ${to}:`, error.message);
     throw error;
