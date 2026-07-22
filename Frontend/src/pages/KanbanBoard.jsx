@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import useSocket from '../hooks/useSocket';
 import {
   DndContext,
   closestCorners,
@@ -22,6 +21,8 @@ import TaskModal from '../components/board/TaskModal';
 import AddCardModal from '../components/board/AddCardModal';
 import axiosInstance from '../api/axiosInstance';
 import { updateBoardBackground, toggleStarBoard } from '../api/boards';
+import { useAuth } from '../context/AuthContext';
+import useSocket from '../hooks/useSocket';
 
 const COLUMNS = [
   { title: 'TO DO', status: 'todo' },
@@ -43,7 +44,10 @@ const BOARD_COLORS = [
 const BoardPage = () => {
   const { boardId } = useParams();
   const navigate = useNavigate();
+  const { emit, on, off } = useSocket(boardId);
+  const { setCurrentBoard } = useAuth();
 
+  // ── state ──────────────────────────────────────────────
   const [board, setBoard] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -53,9 +57,8 @@ const BoardPage = () => {
   const [bgColor, setBgColor] = useState('#1e293b');
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [starred, setStarred] = useState(false);
-  const colorPickerRef = useRef(null);
 
-  const { emit, on, off } = useSocket(boardId);
+  const colorPickerRef = useRef(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -63,24 +66,44 @@ const BoardPage = () => {
     })
   );
 
-  // ── close color picker on outside click
-  useEffect(() => {
-    const handleClick = (e) => {
-      if (colorPickerRef.current && !colorPickerRef.current.contains(e.target)) {
-        setShowColorPicker(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
+  // ── data fetching ──────────────────────────────────────
+  const fetchBoard = async () => {
+    try {
+      const res = await axiosInstance.get(`/boards/${boardId}`);
+      setBoard(res.data);
+      setBgColor(res.data.bgColor || '#1e293b');
+      setStarred(res.data.starred || false);
 
-  // ── fetch board and tasks on mount
+      // keep sidebar context in sync across pages
+      setCurrentBoard({
+        boardId: res.data._id,
+        workspaceId: res.data.workspace,
+      });
+    } catch {
+      navigate('/dashboard');
+    }
+  };
+
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosInstance.get(`/tasks?boardId=${boardId}`);
+      setTasks(res.data);
+    } catch (err) {
+      console.error('Failed to fetch tasks:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getColumnTasks = (status) => tasks.filter((t) => t.status === status);
+
+  // ── effects ────────────────────────────────────────────
   useEffect(() => {
     fetchBoard();
     fetchTasks();
   }, [boardId]);
 
-  // ── socket listeners
   useEffect(() => {
     on('task_moved', ({ taskId, status, position }) => {
       setTasks((prev) =>
@@ -94,13 +117,12 @@ const BoardPage = () => {
       });
     });
     on('task_updated', ({ task }) => {
-      setTasks((prev) =>
-        prev.map((t) => (t._id === task._id ? task : t))
-      );
+      setTasks((prev) => prev.map((t) => (t._id === task._id ? task : t)));
     });
     on('task_deleted', ({ taskId }) => {
       setTasks((prev) => prev.filter((t) => t._id !== taskId));
     });
+
     return () => {
       off('task_moved');
       off('task_created');
@@ -109,32 +131,17 @@ const BoardPage = () => {
     };
   }, [boardId]);
 
-  const fetchBoard = async () => {
-    try {
-      const res = await axiosInstance.get(`/boards/${boardId}`);
-      setBoard(res.data);
-      setBgColor(res.data.bgColor || '#1e293b');
-      setStarred(res.data.starred || false);
-    } catch {
-      navigate('/dashboard');
-    }
-  };
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(e.target)) {
+        setShowColorPicker(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
-  const fetchTasks = async () => {
-    try {
-      setLoading(true);
-      const res = await axiosInstance.get(`/tasks?boardId=${boardId}`);
-      setTasks(res.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getColumnTasks = (status) =>
-    tasks.filter((t) => t.status === status);
-
+  // ── task handlers ──────────────────────────────────────
   const handleCreateTask = async (formData) => {
     try {
       const res = await axiosInstance.post('/tasks', {
@@ -152,9 +159,7 @@ const BoardPage = () => {
   const handleUpdateTask = async (taskId, formData) => {
     try {
       const res = await axiosInstance.patch(`/tasks/${taskId}`, formData);
-      setTasks((prev) =>
-        prev.map((t) => (t._id === taskId ? res.data : t))
-      );
+      setTasks((prev) => prev.map((t) => (t._id === taskId ? res.data : t)));
       emit('task_updated', { boardId, task: res.data });
     } catch (err) {
       console.error('Failed to update task:', err);
@@ -171,6 +176,7 @@ const BoardPage = () => {
     }
   };
 
+  // ── board handlers ─────────────────────────────────────
   const handleToggleStar = async () => {
     try {
       const res = await toggleStarBoard(boardId);
@@ -190,6 +196,7 @@ const BoardPage = () => {
     }
   };
 
+  // ── drag & drop ─────────────────────────────────────────
   const handleDragStart = (event) => {
     const task = tasks.find((t) => t._id === event.active.id);
     setActiveTask(task);
@@ -207,38 +214,62 @@ const BoardPage = () => {
 
     const isColumn = COLUMNS.some((c) => c.status === overId);
 
+    // ── moved into a different column ──
     if (isColumn && draggedTask.status !== overId) {
       setTasks((prev) =>
-        prev.map((t) =>
-          t._id === activeTaskId ? { ...t, status: overId } : t
-        )
+        prev.map((t) => (t._id === activeTaskId ? { ...t, status: overId } : t))
       );
-      await axiosInstance.patch(`/tasks/${activeTaskId}/move`, {
-        status: overId,
-        position: 0,
-      });
-      emit('task_moved', {
-        boardId,
-        taskId: activeTaskId,
-        status: overId,
-        position: 0,
-      });
+      try {
+        await axiosInstance.patch(`/tasks/${activeTaskId}/move`, {
+          status: overId,
+          position: 0,
+        });
+        emit('task_moved', {
+          boardId,
+          taskId: activeTaskId,
+          status: overId,
+          position: 0,
+        });
+      } catch (err) {
+        console.error('Failed to persist task move:', err);
+      }
       return;
     }
 
+    // ── reordered within the same column ──
     const overTask = tasks.find((t) => t._id === overId);
     if (overTask && draggedTask.status === overTask.status) {
       const columnTasks = getColumnTasks(draggedTask.status);
       const oldIndex = columnTasks.findIndex((t) => t._id === activeTaskId);
       const newIndex = columnTasks.findIndex((t) => t._id === overId);
+      if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return;
+
       const reordered = arrayMove(columnTasks, oldIndex, newIndex);
+
+      // optimistic local update, preserving other columns' order
       setTasks((prev) => [
         ...prev.filter((t) => t.status !== draggedTask.status),
         ...reordered,
       ]);
+
+      try {
+        await axiosInstance.patch(`/tasks/${activeTaskId}/move`, {
+          status: draggedTask.status,
+          position: newIndex,
+        });
+        emit('task_moved', {
+          boardId,
+          taskId: activeTaskId,
+          status: draggedTask.status,
+          position: newIndex,
+        });
+      } catch (err) {
+        console.error('Failed to persist task reorder:', err);
+      }
     }
   };
 
+  // ── render ──────────────────────────────────────────────
   if (loading) {
     return (
       <div
@@ -258,7 +289,6 @@ const BoardPage = () => {
       <Sidebar />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-
         {/* ── Top Bar ── */}
         <header className="h-auto min-h-14 bg-black/30 backdrop-blur-sm border-b border-white/10 flex flex-wrap items-center justify-between px-4 md:px-6 py-3 gap-3 flex-shrink-0">
           <div className="flex items-center gap-3">
@@ -279,16 +309,13 @@ const BoardPage = () => {
               <Star
                 size={16}
                 className={
-                  starred
-                    ? 'fill-amber-400 text-amber-400'
-                    : 'text-slate-500 hover:text-amber-400'
+                  starred ? 'fill-amber-400 text-amber-400' : 'text-slate-500 hover:text-amber-400'
                 }
               />
             </button>
           </div>
 
           <div className="flex items-center gap-2 md:gap-3">
-            {/* Member avatars — hidden on very small screens */}
             <div className="hidden sm:flex -space-x-2">
               {board?.members?.slice(0, 3).map((member, i) => (
                 <div
@@ -297,11 +324,7 @@ const BoardPage = () => {
                   className="w-7 h-7 rounded-full bg-indigo-600 border-2 border-black/30 flex items-center justify-center text-white text-[10px] font-bold overflow-hidden"
                 >
                   {member.avatar ? (
-                    <img
-                      src={member.avatar}
-                      alt={member.name}
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={member.avatar} alt={member.name} className="w-full h-full object-cover" />
                   ) : (
                     member.name?.charAt(0).toUpperCase() || '?'
                   )}
@@ -314,7 +337,6 @@ const BoardPage = () => {
               )}
             </div>
 
-            {/* Invite button */}
             <button
               onClick={() => navigate(`/workspace/${board?.workspace}/invite`)}
               className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition-all"
@@ -323,7 +345,6 @@ const BoardPage = () => {
               <span className="hidden sm:inline">Invite</span>
             </button>
 
-            {/* Color picker */}
             <div ref={colorPickerRef} className="relative">
               <button
                 onClick={() => setShowColorPicker(!showColorPicker)}
@@ -345,9 +366,7 @@ const BoardPage = () => {
                         onClick={() => handleColorChange(c.value)}
                         title={c.label}
                         className={`w-10 h-10 rounded-xl border-2 transition-all ${
-                          bgColor === c.value
-                            ? 'border-indigo-400 scale-110'
-                            : 'border-transparent hover:scale-105'
+                          bgColor === c.value ? 'border-indigo-400 scale-110' : 'border-transparent hover:scale-105'
                         }`}
                         style={{ backgroundColor: c.value }}
                       />
@@ -357,7 +376,6 @@ const BoardPage = () => {
               )}
             </div>
 
-            {/* Settings */}
             <button
               onClick={() => navigate('/profile')}
               className="text-slate-400 hover:text-white transition-colors p-1"
@@ -376,10 +394,7 @@ const BoardPage = () => {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
           >
-            <div
-              className="flex gap-4 md:gap-5 items-start"
-              style={{ minWidth: 'max-content' }}
-            >
+            <div className="flex gap-4 md:gap-5 items-start" style={{ minWidth: 'max-content' }}>
               {COLUMNS.map((column) => (
                 <Column
                   key={column.status}
@@ -406,7 +421,6 @@ const BoardPage = () => {
         </div>
       </div>
 
-      {/* ── Task Detail Modal ── */}
       {selectedTask && (
         <TaskModal
           task={selectedTask}
@@ -416,7 +430,6 @@ const BoardPage = () => {
         />
       )}
 
-      {/* ── Add Card Modal ── */}
       {addCardStatus && (
         <AddCardModal
           status={addCardStatus}

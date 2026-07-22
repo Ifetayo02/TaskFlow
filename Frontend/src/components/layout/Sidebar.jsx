@@ -8,70 +8,34 @@ import {
   LogOut,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { useState, useEffect } from 'react';
-import axiosInstance from '../../api/axiosInstance';
+import { useLocation as useRouterLocation } from 'react-router-dom';
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { boardId: urlBoardId } = useParams();
-  const { logout } = useAuth();
+  const { logout, currentBoard } = useAuth();
 
-  const [workspaceId, setWorkspaceId] = useState(null);
-
-  // persist boardId across pages using localStorage
-  const [boardId, setBoardId] = useState(() => {
-    return urlBoardId || localStorage.getItem('lastBoardId') || null;
-  });
-
-  // when urlBoardId changes (user navigates to a board) save it
-  useEffect(() => {
-    if (urlBoardId) {
-      setBoardId(urlBoardId);
-      localStorage.setItem('lastBoardId', urlBoardId);
-    }
-  }, [urlBoardId]);
-
-  // fetch workspace from board
-  useEffect(() => {
-    if (boardId) {
-      axiosInstance
-        .get(`/boards/${boardId}`)
-        .then((res) => {
-          setWorkspaceId(res.data.workspace);
-          // also persist workspaceId
-          localStorage.setItem('lastWorkspaceId', res.data.workspace);
-        })
-        .catch(() => {
-          // board fetch failed — try getting workspaceId from localStorage
-          const saved = localStorage.getItem('lastWorkspaceId');
-          if (saved) setWorkspaceId(saved);
-        });
-    } else {
-      // no boardId at all — try localStorage for workspaceId
-      const saved = localStorage.getItem('lastWorkspaceId');
-      if (saved) setWorkspaceId(saved);
-    }
-  }, [boardId]);
+  // use URL boardId if available, otherwise fall back to context
+  const activeBoardId = urlBoardId || currentBoard?.boardId;
+  const activeWorkspaceId = currentBoard?.workspaceId;
 
   const handleLogout = () => {
     logout();
-    localStorage.removeItem('lastBoardId');
-    localStorage.removeItem('lastWorkspaceId');
     navigate('/signin');
   };
 
   const handleMembersClick = () => {
-    if (workspaceId) {
-      navigate(`/workspace/${workspaceId}/invite`);
+    if (activeWorkspaceId) {
+      navigate(`/workspace/${activeWorkspaceId}/invite`);
     } else {
       navigate('/dashboard');
     }
   };
 
   const handleAnalyticsClick = () => {
-    if (boardId) {
-      navigate(`/board/${boardId}/analytics`);
+    if (activeBoardId) {
+      navigate(`/board/${activeBoardId}/analytics`);
     } else {
       navigate('/dashboard');
     }
@@ -103,6 +67,7 @@ const Sidebar = () => {
         tooltip="Members"
         active={location.pathname.includes('/invite')}
         onClick={handleMembersClick}
+        disabled={!activeWorkspaceId}
       />
 
       {/* Analytics */}
@@ -111,6 +76,7 @@ const Sidebar = () => {
         tooltip="Analytics"
         active={location.pathname.includes('/analytics')}
         onClick={handleAnalyticsClick}
+        disabled={!activeBoardId}
       />
 
       {/* Bottom */}
@@ -131,12 +97,14 @@ const Sidebar = () => {
   );
 };
 
-const NavIcon = ({ icon: Icon, tooltip, onClick, active = false }) => (
+const NavIcon = ({ icon: Icon, tooltip, onClick, active = false, disabled = false }) => (
   <button
-    onClick={onClick}
-    title={tooltip}
+    onClick={disabled ? undefined : onClick}
+    title={disabled ? `Open a board first to use ${tooltip}` : tooltip}
     className={`w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg transition-all flex-shrink-0 ${
-      active
+      disabled
+        ? 'text-slate-700 cursor-not-allowed'
+        : active
         ? 'bg-indigo-600/20 text-indigo-400'
         : 'text-slate-500 hover:text-white hover:bg-white/10'
     }`}
