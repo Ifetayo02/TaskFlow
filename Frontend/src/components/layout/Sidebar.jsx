@@ -23,41 +23,25 @@ const Sidebar = () => {
     navigate('/signin');
   };
 
-  const handleMembersClick = () => {
-    if (activeWorkspaceId) {
-      navigate(`/workspace/${activeWorkspaceId}/invite`);
-    } else {
-      navigate('/dashboard');
-    }
-  };
-
-  const handleAnalyticsClick = () => {
-    if (activeBoardId) {
-      navigate(`/board/${activeBoardId}/analytics`);
-    } else {
-      navigate('/dashboard');
-    }
-  };
-
   const isActive = (path) => location.pathname.startsWith(path);
 
   return (
-    <aside className="bg-[#0F172A] border-r border-slate-800 flex flex-col items-center min-h-screen flex-shrink-0"
+    <aside
+      className="bg-[#0F172A] border-r border-slate-800 flex flex-col items-center min-h-screen flex-shrink-0"
       style={{ width: '56px' }}
     >
-      {/* Internal scroll container */}
       <div className="flex flex-col items-center w-full py-4 gap-1 flex-1">
 
-        {/* Logo */}
+        {/* Logo — always goes to dashboard */}
         <button
           onClick={() => navigate('/dashboard')}
           style={{ width: '40px', height: '40px', marginBottom: '12px' }}
-          className="bg-indigo-600 rounded-lg flex items-center justify-center hover:bg-indigo-700 transition-colors flex-shrink-0"
+          className="bg-indigo-600 rounded-lg flex items-center justify-center hover:bg-indigo-700 active:bg-indigo-800 transition-colors flex-shrink-0"
         >
           <LayoutGrid size={18} className="text-white" />
         </button>
 
-        {/* My Tasks */}
+        {/* My Tasks — always works */}
         <NavIcon
           icon={ClipboardList}
           tooltip="My Tasks"
@@ -65,22 +49,28 @@ const Sidebar = () => {
           onClick={() => navigate('/my-tasks')}
         />
 
-        {/* Members */}
+        {/* Members — goes to invite if workspace known, else dashboard */}
         <NavIcon
           icon={Users}
           tooltip="Members"
           active={location.pathname.includes('/invite')}
-          onClick={handleMembersClick}
-          disabled={!activeWorkspaceId}
+          onClick={() =>
+            activeWorkspaceId
+              ? navigate(`/workspace/${activeWorkspaceId}/invite`)
+              : navigate('/dashboard')
+          }
         />
 
-        {/* Analytics */}
+        {/* Analytics — goes to analytics if board known, else dashboard */}
         <NavIcon
           icon={BarChart2}
           tooltip="Analytics"
           active={location.pathname.includes('/analytics')}
-          onClick={handleAnalyticsClick}
-          disabled={!activeBoardId}
+          onClick={() =>
+            activeBoardId
+              ? navigate(`/board/${activeBoardId}/analytics`)
+              : navigate('/dashboard')
+          }
         />
 
         {/* Bottom */}
@@ -102,15 +92,13 @@ const Sidebar = () => {
   );
 };
 
-const NavIcon = ({ icon: Icon, tooltip, onClick, active = false, disabled = false }) => (
+const NavIcon = ({ icon: Icon, tooltip, onClick, active = false }) => (
   <button
-    onClick={disabled ? undefined : onClick}
-    title={disabled ? `Open a board first to use ${tooltip}` : tooltip}
+    onClick={onClick}
+    title={tooltip}
     style={{ width: '44px', height: '44px' }}
     className={`flex items-center justify-center rounded-xl transition-all flex-shrink-0 ${
-      disabled
-        ? 'text-slate-700 cursor-not-allowed'
-        : active
+      active
         ? 'bg-indigo-600/20 text-indigo-400'
         : 'text-slate-500 hover:text-white hover:bg-white/10 active:bg-white/20'
     }`}
