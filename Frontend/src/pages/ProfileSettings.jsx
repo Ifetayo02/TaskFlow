@@ -129,7 +129,7 @@ const ProfileSettings = () => {
 
         <div className="flex-1 p-8 max-w-2xl w-full mx-auto">
 
-          {/* Avatar */}
+          {}
           <Section title="Profile Picture" icon={Camera}>
             <div className="flex items-center gap-6">
               <div className="relative">
@@ -164,7 +164,7 @@ const ProfileSettings = () => {
             </div>
           </Section>
 
-          {/* Personal Info */}
+          {}
           <Section title="Personal Information" icon={User}>
             {profileSuccess && (
               <div className="mb-4 flex items-center gap-2 px-4 py-3 rounded-xl text-sm text-emerald-300 font-medium"
@@ -218,7 +218,7 @@ const ProfileSettings = () => {
             </form>
           </Section>
 
-          {/* Change Password */}
+          {}
           <Section title="Change Password" icon={Lock}>
             {isGoogleUser ? (
               <div className="flex items-center gap-3 p-4 rounded-xl"

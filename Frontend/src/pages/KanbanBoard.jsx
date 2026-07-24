@@ -47,7 +47,7 @@ const BoardPage = () => {
   const { emit, on, off } = useSocket(boardId);
   const { setCurrentBoard } = useAuth();
 
-  // ── state ──────────────────────────────────────────────
+  
   const [board, setBoard] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -66,7 +66,7 @@ const BoardPage = () => {
     })
   );
 
-  // ── data fetching ──────────────────────────────────────
+  
   const fetchBoard = async () => {
     try {
       const res = await axiosInstance.get(`/boards/${boardId}`);
@@ -74,7 +74,7 @@ const BoardPage = () => {
       setBgColor(res.data.bgColor || '#1e293b');
       setStarred(res.data.starred || false);
 
-      // keep sidebar context in sync across pages
+      
       setCurrentBoard({
         boardId: res.data._id,
         workspaceId: res.data.workspace,
@@ -98,7 +98,7 @@ const BoardPage = () => {
 
   const getColumnTasks = (status) => tasks.filter((t) => t.status === status);
 
-  // ── effects ────────────────────────────────────────────
+  
   useEffect(() => {
     fetchBoard();
     fetchTasks();
@@ -141,7 +141,7 @@ const BoardPage = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // ── task handlers ──────────────────────────────────────
+  
   const handleCreateTask = async (formData) => {
     try {
       const res = await axiosInstance.post('/tasks', {
@@ -176,7 +176,7 @@ const BoardPage = () => {
     }
   };
 
-  // ── board handlers ─────────────────────────────────────
+  
   const handleToggleStar = async () => {
     try {
       const res = await toggleStarBoard(boardId);
@@ -196,7 +196,7 @@ const BoardPage = () => {
     }
   };
 
-  // ── drag & drop ─────────────────────────────────────────
+  
   const handleDragStart = (event) => {
     const task = tasks.find((t) => t._id === event.active.id);
     setActiveTask(task);
@@ -214,7 +214,7 @@ const BoardPage = () => {
 
     const isColumn = COLUMNS.some((c) => c.status === overId);
 
-    // ── moved into a different column ──
+    
     if (isColumn && draggedTask.status !== overId) {
       setTasks((prev) =>
         prev.map((t) => (t._id === activeTaskId ? { ...t, status: overId } : t))
@@ -236,7 +236,7 @@ const BoardPage = () => {
       return;
     }
 
-    // ── reordered within the same column ──
+    
     const overTask = tasks.find((t) => t._id === overId);
     if (overTask && draggedTask.status === overTask.status) {
       const columnTasks = getColumnTasks(draggedTask.status);
@@ -246,7 +246,7 @@ const BoardPage = () => {
 
       const reordered = arrayMove(columnTasks, oldIndex, newIndex);
 
-      // optimistic local update, preserving other columns' order
+      
       setTasks((prev) => [
         ...prev.filter((t) => t.status !== draggedTask.status),
         ...reordered,
@@ -269,7 +269,7 @@ const BoardPage = () => {
     }
   };
 
-  // ── render ──────────────────────────────────────────────
+  
   if (loading) {
     return (
       <div
@@ -289,7 +289,7 @@ const BoardPage = () => {
       <Sidebar />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* ── Top Bar ── */}
+        {}
         <header className="h-auto min-h-14 bg-black/30 backdrop-blur-sm border-b border-white/10 flex flex-wrap items-center justify-between px-4 md:px-6 py-3 gap-3 flex-shrink-0">
           <div className="flex items-center gap-3">
             <button
@@ -386,7 +386,7 @@ const BoardPage = () => {
           </div>
         </header>
 
-        {/* ── Kanban Canvas ── */}
+        {}
         <div className="flex-1 overflow-x-auto overflow-y-auto p-4 md:p-6">
           <DndContext
             sensors={sensors}

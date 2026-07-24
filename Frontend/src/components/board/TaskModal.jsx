@@ -3,7 +3,7 @@ import { X, Calendar, Tag, Trash2, Loader2, UserCheck,Clock } from 'lucide-react
 import { useAuth } from '../../context/AuthContext';
 import { getBoardMembers } from '../../api/boards';
 
-// --- Constants ---
+
 const LABELS = ['DESIGN', 'FEATURE', 'HIGH PRIORITY', 'BUG', 'RESEARCH'];
 const STATUSES = [
   { value: 'todo', label: 'To Do' },
@@ -12,10 +12,10 @@ const STATUSES = [
 ];
 
 const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
-  // --- Hooks & Context ---
+  
   const { user } = useAuth();
 
-  // --- Local State ---
+  
   const [loading, setLoading] = useState(false);
   const [members, setMembers] = useState([]);
   const [assignedTo, setAssignedTo] = useState(
@@ -30,7 +30,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
     priority: task.priority || 'medium',
   });
 
-  // --- Effects ---
+  
   useEffect(() => {
     if (task.board) {
       getBoardMembers(task.board)
@@ -39,7 +39,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
     }
   }, [task.board]);
 
-  // --- Handlers ---
+  
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -61,15 +61,15 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
     }
   };
 
-  // --- Derived State ---
+  
   const isAssignedToMe = assignedTo === user?._id;
 
-  // --- Render ---
+  
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
         
-        {/* Modal Header */}
+        {}
         <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-100">
           <h2 className="text-lg font-bold text-slate-900">Task Details</h2>
           <button
@@ -80,7 +80,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
           </button>
         </div>
 
-        {/* Modal Body */}
+        {}
         <div className="p-6 space-y-5">
             {task.createdAt && (
   <p className="text-xs text-slate-500 mb-4 flex items-center gap-1">
@@ -94,7 +94,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
     })}
   </p>
 )}
-          {/* Title */}
+          {}
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
               Title
@@ -107,7 +107,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
             />
           </div>
 
-          {/* Description */}
+          {}
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
               Description
@@ -122,7 +122,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
             />
           </div>
 
-          {/* Row: Status + Priority */}
+          {}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
@@ -159,7 +159,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
             </div>
           </div>
 
-          {/* Activity Log */}
+          {}
           {task.activity && task.activity.length > 0 && (
             <div className="mt-6">
               <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
@@ -193,7 +193,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
             </div>
           )}
 
-          {/* Row: Label + Due Date */}
+          {}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
@@ -230,7 +230,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
             </div>
           </div>
 
-          {/* Assign To */}
+          {}
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
               Assign To
@@ -253,7 +253,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
           </div>
         </div>
 
-        {/* Modal Footer */}
+        {}
         <div className="px-6 pb-6 flex items-center justify-between">
           <button
             onClick={handleDelete}

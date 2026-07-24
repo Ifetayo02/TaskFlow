@@ -8,13 +8,13 @@ const Hero = () => {
 
   return (
     <section className="pt-8 md:pt-12 pb-16 md:pb-24 px-4 text-center relative">
-      {/* Background glow blobs */}
+      {}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] md:w-[600px] h-[300px] md:h-[400px] bg-indigo-600/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-20 left-1/4 w-48 md:w-72 h-48 md:h-72 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-20 right-1/4 w-48 md:w-72 h-48 md:h-72 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10">
-        {/* Badge */}
+        {}
         <div
           className="inline-flex items-center px-3 md:px-4 py-1.5 mb-6 md:mb-8 text-[10px] md:text-xs font-bold tracking-wider text-indigo-300 uppercase rounded-full"
           style={{
@@ -25,7 +25,7 @@ const Hero = () => {
           ● Now: Live Kanban Automations
         </div>
 
-        {/* Headline */}
+        {}
         <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-white mb-6 md:mb-8 leading-[1.1] px-2">
           Organize work.{' '}
           <span
@@ -43,7 +43,7 @@ const Hero = () => {
           without the chaos.
         </p>
 
-        {/* CTA buttons */}
+        {}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 md:mb-20 px-4">
           <button
             onClick={() => navigate('/signup')}
@@ -53,7 +53,7 @@ const Hero = () => {
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </button>
 
-          {/* Log In button replacing Watch Demo */}
+          {}
           <button
             onClick={() => navigate('/signin')}
             className="w-full sm:w-auto flex items-center justify-center gap-3 font-bold transition-all px-6 py-4 rounded-xl"
@@ -68,7 +68,7 @@ const Hero = () => {
           </button>
         </div>
 
-        {/* Hero image */}
+        {}
         <div
           className="max-w-5xl mx-auto overflow-hidden"
           style={{
@@ -77,7 +77,7 @@ const Hero = () => {
             boxShadow: '0 40px 80px -20px rgba(0,0,0,0.6)',
           }}
         >
-          {/* Fake browser bar */}
+          {}
           <div
             className="flex items-center gap-2 px-3 md:px-4 py-2 md:py-3"
             style={{

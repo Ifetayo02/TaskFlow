@@ -1,28 +1,22 @@
-const dotenv = require('dotenv');
 const path = require('path');
-
-// load .env.local first (real secrets), then .env (dummy fallback)
+const http = require('http');
+const https = require('https');
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local'), override: true });
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
-
-const express = require('express');
-const http = require('http');
-const cors = require('cors');
-
 const connectDB = require('./config/db');
 const initSocket = require('./config/socket');
 const errorHandler = require('./middleware/errorHandler');
 const startDeadlineChecker = require('./utils/deadlineChecker');
 
-dotenv.config();
-connectDB();
-
 const app = express();
 const server = http.createServer(app);
 const io = initSocket(server);
-app.set('io', io);
 
-// replace your current cors line with this
+app.set('io', io); 
+connectDB();
 app.use(cors({
   origin: [
     'http://localhost:5173',
@@ -34,20 +28,32 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// session needed for passport Google flow
+const keepAlive = () => {
+  const url = process.env.SERVER_URL;
+  if (url && url.includes('onrender.com')) {
+    setInterval(() => {
+      https.get(url, (res) => {
+        console.log(`Keep-alive ping: ${res.statusCode}`);
+      }).on('error', (err) => {
+        console.error('Keep-alive ping failed:', err.message);
+      });
+    }, 14 * 60 * 1000); 
+  }
+};
+keepAlive();
 
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', time: new Date().toISOString() });
+});
 
-// routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/workspaces', require('./routes/workspaces'));
 app.use('/api/boards', require('./routes/boards'));
 app.use('/api/tasks', require('./routes/tasks'));
-
 app.use(errorHandler);
-
 const PORT = process.env.PORT || 5000;
+
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  startDeadlineChecker();
 });
-
-startDeadlineChecker();

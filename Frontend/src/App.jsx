@@ -1,4 +1,4 @@
-// client/src/App.jsx
+
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 
@@ -23,7 +23,7 @@ function App() {
   
         <AuthProvider>
           <Routes>
-            {/* ── Public routes ── */}
+            {}
             <Route path="/" element={<LandingPage />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/signin" element={<SignIn />} />
@@ -31,7 +31,7 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
 
-            {/* ── Protected routes ── */}
+            {}
             <Route
               path="/dashboard"
               element={
@@ -81,7 +81,7 @@ function App() {
               }
             />
 
-            {/* ── Fallback ── */}
+            {}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </AuthProvider>

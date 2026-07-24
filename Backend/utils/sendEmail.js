@@ -1,24 +1,26 @@
-// server/utils/sendEmail.js
-const { Resend } = require('resend');
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+const nodemailer = require('nodemailer');
 
 const sendEmail = async ({ to, subject, html }) => {
   try {
-    const { data, error } = await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+    const transporter = nodemailer.createTransport({
+      host: 'smtp-relay.brevo.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.BREVO_EMAIL,
+        pass: process.env.BREVO_API_KEY,
+      },
+    });
+
+    const info = await transporter.sendMail({
+      from: `"TaskFlow" <${process.env.BREVO_EMAIL}>`,
       to,
       subject,
       html,
     });
 
-    if (error) {
-      console.error('Resend error:', error);
-      throw new Error(error.message);
-    }
-
-    console.log(`Email sent to ${to}: ${data.id}`);
-    return data;
+    console.log(`Email sent to ${to}: ${info.messageId}`);
+    return info;
   } catch (error) {
     console.error(`Failed to send email to ${to}:`, error.message);
     throw error;

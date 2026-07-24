@@ -1,4 +1,4 @@
-// client/src/api/auth.js
+
 import axiosInstance from './axiosInstance';
 
 export const registerUser = (data) =>
@@ -10,7 +10,7 @@ export const loginUser = (data) =>
 export const getMe = () =>
   axiosInstance.get('/auth/me');
 
-// sends Google user info to your backend
+
 export const googleAuthAPI = (data) =>
   axiosInstance.post('/auth/google', data);
 

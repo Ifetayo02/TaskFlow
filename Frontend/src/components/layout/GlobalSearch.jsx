@@ -40,7 +40,7 @@ const GlobalSearch = () => {
     return () => clearTimeout(handler);
   }, [query]);
 
-  // close on outside click
+  
   useEffect(() => {
     const handleClick = (e) => {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
@@ -84,7 +84,7 @@ const GlobalSearch = () => {
         )}
       </div>
 
-      {/* Dropdown */}
+      {}
       {open && query.length >= 2 && (
         <div className="absolute top-full mt-2 w-full bg-white rounded-2xl shadow-xl border border-slate-100 z-50 overflow-hidden">
           {loading ? (

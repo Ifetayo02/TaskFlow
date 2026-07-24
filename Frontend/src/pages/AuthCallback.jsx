@@ -1,4 +1,4 @@
-// client/src/pages/AuthCallback.jsx
+
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -19,7 +19,7 @@ const AuthCallback = () => {
       return;
     }
 
-    // save token and fetch user
+    
     localStorage.setItem('token', token);
     getMe()
       .then((res) => {

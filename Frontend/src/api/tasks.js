@@ -1,4 +1,4 @@
-// client/src/api/tasks.js
+
 import axiosInstance from './axiosInstance';
 
 export const getTasks = (boardId) =>

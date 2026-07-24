@@ -1,16 +1,16 @@
-// server/controllers/authController.js
+
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sendEmail = require('../utils/sendEmail');
 const { cloudinary } = require('../config/cloudinary');
 
-// helper to generate a token
+
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 };
 
-// POST /api/auth/register
+
 const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -31,7 +31,7 @@ const register = async (req, res) => {
   }
 };
 
-// POST /api/auth/login
+
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -55,12 +55,12 @@ const login = async (req, res) => {
   }
 };
 
-// GET /api/auth/me
+
 const getMe = async (req, res) => {
   res.json(req.user);
 };
 
-// POST /api/auth/google
+
 const googleAuth = async (req, res) => {
   try {
     const { name, email, avatar } = req.body;
@@ -88,7 +88,7 @@ const googleAuth = async (req, res) => {
   }
 };
 
-// POST /api/auth/forgot-password
+
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -100,13 +100,13 @@ const forgotPassword = async (req, res) => {
       });
     }
 
-    // ── NEW: block Google users from password reset
+    
     if (user.passwordHash === 'GOOGLE_AUTH') {
       return res.json({
         message: 'If that email exists you will receive a reset link shortly.',
       });
-      // we return the same generic message for security
-      // but we don't send any email — there's no password to reset
+      
+      
     }
 
     const resetToken = jwt.sign(
@@ -146,7 +146,7 @@ const forgotPassword = async (req, res) => {
 }
 };
 
-// POST /api/auth/reset-password
+
 const resetPassword = async (req, res) => {
   try {
     const { token, password } = req.body;
@@ -174,7 +174,7 @@ const resetPassword = async (req, res) => {
   }
 };
 
-// PATCH /api/auth/update-profile
+
 const updateProfile = async (req, res) => {
   try {
     const { name, email } = req.body;
@@ -204,7 +204,7 @@ const updateProfile = async (req, res) => {
   }
 };
 
-// PATCH /api/auth/change-password
+
 const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -237,7 +237,7 @@ const changePassword = async (req, res) => {
   }
 };
 
-// POST /api/auth/upload-avatar
+
 const uploadAvatar = async (req, res) => {
   try {
     if (!req.file) {
@@ -246,7 +246,7 @@ const uploadAvatar = async (req, res) => {
 
     const user = await User.findById(req.user._id);
 
-    // delete old avatar from Cloudinary if it exists
+    
     if (user.avatar) {
       const publicId = user.avatar.split('/').pop().split('.')[0];
       await cloudinary.uploader.destroy(`taskflow/avatars/${publicId}`);

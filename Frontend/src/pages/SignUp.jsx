@@ -55,10 +55,9 @@ const SignUp = () => {
       className="min-h-screen flex flex-col items-center justify-center p-6 font-sans relative overflow-hidden"
       style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)' }}
     >
-      {/* Glow blobs */}
-      {/* <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" /> */}
-      {/* Back to home link */}
+      {}
+      {}
+      {}
       <div className="w-full max-w-[480px] mb-4 relative z-10">
         <button
           onClick={() => navigate('/')}
@@ -68,7 +67,7 @@ const SignUp = () => {
           Back to home
         </button>
       </div>
-      {/* Card */}
+      {}
       <div
         className="w-full max-w-[480px] rounded-[2rem] p-10 md:p-14 relative z-10"
         style={{
@@ -78,7 +77,7 @@ const SignUp = () => {
           boxShadow: '0 25px 50px rgba(0,0,0,0.4)',
         }}
       >
-        {/* Header */}
+        {}
         <div className="text-center mb-10">
           <div className="flex items-center justify-center gap-2 mb-6">
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
@@ -90,14 +89,14 @@ const SignUp = () => {
           <p className="text-slate-400 text-sm">Precision engineering for high-velocity teams.</p>
         </div>
 
-        {/* Error */}
+        {}
         {(error || googleError) && (
           <div className="mb-6 px-4 py-3 bg-red-500/20 border border-red-500/30 rounded-xl text-sm text-red-300 font-medium">
             {error || googleError}
           </div>
         )}
 
-        {/* Form */}
+        {}
         <form className="space-y-5" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-semibold text-slate-400 mb-2 px-1">Full Name</label>
@@ -163,7 +162,7 @@ const SignUp = () => {
           </button>
         </form>
 
-        {/* Divider */}
+        {}
         <div className="relative my-8">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }} />
@@ -173,7 +172,7 @@ const SignUp = () => {
           </div>
         </div>
 
-        {/* Google */}
+        {}
         <button
           type="button"
           onClick={signInWithGoogle}
@@ -206,7 +205,7 @@ const SignUp = () => {
         </p>
       </div>
 
-      {/* Trust badges */}
+      {}
       <div className="mt-8 flex gap-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest relative z-10">
         <div className="flex items-center gap-1.5">
           <Lock className="w-3 h-3" /> Secure AES-256

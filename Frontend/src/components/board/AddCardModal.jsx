@@ -118,7 +118,7 @@ const AddCardModal = ({ status, boardId, onClose, onCreate }) => {
             />
           </div>
 
-          {/* Assignee picker */}
+          {}
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
               Assign To

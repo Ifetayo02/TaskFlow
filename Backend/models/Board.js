@@ -1,4 +1,4 @@
-// server/models/Board.js
+
 const mongoose = require('mongoose');
 
 const boardSchema = new mongoose.Schema(
@@ -19,7 +19,7 @@ const boardSchema = new mongoose.Schema(
 },
     bgColor: {
       type: String,
-      default: '#1e293b', // slate-800
+      default: '#1e293b', 
     },
     lists: [
       {

@@ -57,7 +57,7 @@ const ResetPassword = () => {
           boxShadow: '0 25px 50px rgba(0,0,0,0.4)',
         }}
       >
-        {/* Header */}
+        {}
         <div className="text-center mb-10">
           <div className="flex items-center justify-center gap-2 mb-6">
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">

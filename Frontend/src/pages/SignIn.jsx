@@ -49,10 +49,9 @@ const SignIn = () => {
         background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)',
       }}
     >
-      {/* Background glow blobs */}
-      {/* <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" /> */}
-      {/* Back to home link */}
+      {}
+      {}
+      {}
 <div className="w-full max-w-[480px] mb-4 relative z-10">
   <button
     onClick={() => navigate('/')}
@@ -62,7 +61,7 @@ const SignIn = () => {
     Back to home
   </button>
 </div>
-      {/* Card */}
+      {}
       <div
         className="w-full max-w-[440px] rounded-[2rem] p-10 md:p-12 relative z-10"
         style={{
@@ -72,7 +71,7 @@ const SignIn = () => {
           boxShadow: '0 25px 50px rgba(0,0,0,0.4)',
         }}
       >
-        {/* Logo */}
+        {}
         <div className="text-center mb-10">
           <div className="flex justify-center mb-6">
             <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
@@ -83,14 +82,14 @@ const SignIn = () => {
           <p className="text-slate-400 text-sm font-medium">Log in to your workspace</p>
         </div>
 
-        {/* Errors */}
+        {}
         {(error || googleError) && (
           <div className="mb-6 px-4 py-3 bg-red-500/20 border border-red-500/30 rounded-xl text-sm text-red-300 font-medium">
             {error || googleError}
           </div>
         )}
 
-        {/* Form */}
+        {}
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">
@@ -163,7 +162,7 @@ const SignIn = () => {
           </button>
         </form>
 
-        {/* Divider */}
+        {}
         <div className="relative my-8">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }} />
@@ -173,7 +172,7 @@ const SignIn = () => {
           </div>
         </div>
 
-        {/* Google */}
+        {}
         <button
           type="button"
           onClick={signInWithGoogle}
@@ -206,7 +205,7 @@ const SignIn = () => {
         </p>
       </div>
 
-      {/* Status bar */}
+      {}
       <div className="mt-8 flex items-center gap-6 text-[11px] font-bold text-slate-500 uppercase tracking-widest relative z-10">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>

@@ -17,10 +17,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../api/axiosInstance';
 import { toggleStarBoard } from '../api/boards';
-// add to imports
 
 
-// add state
+
+
 
 
 import GlobalSearch from '../components/layout/GlobalSearch';
@@ -31,7 +31,7 @@ const gridBg = {
   backgroundSize: '32px 32px',
 };
 
-// ─── Sidebar Item ─────────────────────────────────────────────
+
 const SidebarItem = ({ icon: Icon, label, active = false, onClick }) => (
   <div
     onClick={onClick}
@@ -46,7 +46,7 @@ const SidebarItem = ({ icon: Icon, label, active = false, onClick }) => (
   </div>
 );
 
-// ─── Board Card ───────────────────────────────────────────────
+
 const gradients = [
   'from-indigo-500 to-indigo-600',
   'from-purple-500 to-purple-600',
@@ -98,7 +98,7 @@ const BoardCard = ({ board, index, onClick, onToggleStar }) => {
   );
 };
 
-// ─── Modal ────────────────────────────────────────────────────
+
 const Modal = ({ title, onClose, onSubmit, loading, children }) => (
   <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
     <div className="bg-slate-900 border border-white/10 rounded-2xl shadow-xl w-full max-w-md p-8 relative">
@@ -124,7 +124,7 @@ const Modal = ({ title, onClose, onSubmit, loading, children }) => (
   </div>
 );
 
-// ─── Dashboard ────────────────────────────────────────────────
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -139,7 +139,7 @@ const Dashboard = () => {
   const [showStarredOnly, setShowStarredOnly] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // modals
+  
   const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
   const [showBoardModal, setShowBoardModal] = useState(false);
   const [workspaceName, setWorkspaceName] = useState('');
@@ -249,7 +249,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen flex flex-col font-sans" style={gridBg}>
       <div className="flex flex-1">
-        {/* Mobile overlay */}
+        {}
 {sidebarOpen && (
   <div
     className="fixed inset-0 bg-black/60 z-40 lg:hidden"
@@ -261,20 +261,20 @@ const Dashboard = () => {
     sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
   }`}
 >
-  {/* close button — mobile only */}
+  {}
   <button
     onClick={() => setSidebarOpen(false)}
     className="absolute top-4 right-4 text-slate-400 hover:text-white lg:hidden"
   >
     <X size={20} />
   </button>
-          {/* Logo */}
+          {}
           <div className="px-6 mb-8 flex items-center gap-2">
             <LayoutGrid className="text-indigo-500" />
             <span className="text-xl font-bold tracking-tight">TaskFlow</span>
           </div>
 
-          {/* User Profile */}
+          {}
           <div
             onClick={() => navigate('/profile')}
             className="mx-4 mb-8 p-3 bg-white/5 rounded-xl border border-white/10 flex items-center gap-3 cursor-pointer hover:bg-white/10 transition-all"
@@ -296,12 +296,12 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Workspaces label */}
+          {}
           <p className="px-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">
             Workspaces
           </p>
 
-          {/* Workspace list */}
+          {}
           <div className="flex-1 overflow-y-auto space-y-1 mb-4">
             {workspaces.map((ws) => (
               <SidebarItem
@@ -322,7 +322,7 @@ const Dashboard = () => {
             )}
           </div>
 
-          {/* Nav items */}
+          {}
           <div className="border-t border-white/10 pt-4 space-y-1">
             <SidebarItem
               icon={ClipboardList}
@@ -346,7 +346,7 @@ const Dashboard = () => {
             />
           </div>
 
-          {/* Bottom buttons */}
+          {}
           <div className="px-4 mt-6 space-y-3">
             <button
               onClick={() => setShowWorkspaceModal(true)}
@@ -363,12 +363,12 @@ const Dashboard = () => {
           </div>
         </aside>
 
-        {/* ── Main Content ── */}
+        {}
         <main className="flex-1 flex flex-col">
-          {/* Header FIX: Removed hardcoded white backgrounds and mapped to transparent/dark styling */}
+          {}
           <header className="h-20 bg-transparent backdrop-blur-md border-b border-white/10 px-8 flex items-center justify-between sticky top-0 z-10">
   <div className="flex items-center gap-4">
-    {/* Hamburger — mobile only */}
+    {}
     <button
       onClick={() => setSidebarOpen(true)}
       className="lg:hidden text-slate-400 hover:text-white transition-colors"
@@ -389,7 +389,7 @@ const Dashboard = () => {
   </div>
 
   <div className="flex items-center gap-3">
-    {/* Hide search on small screens */}
+    {}
     <div className="hidden md:block">
       <GlobalSearch />
     </div>
@@ -406,7 +406,7 @@ const Dashboard = () => {
   </div>
           </header>
 
-          {/* Error banner */}
+          {}
           {error && (
             <div className="mx-8 mt-6 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-400 font-medium flex justify-between">
               {error}
@@ -416,7 +416,7 @@ const Dashboard = () => {
             </div>
           )}
 
-          {/* Empty state */}
+          {}
           {workspaces.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
               <div className="w-16 h-16 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl flex items-center justify-center mb-4">
@@ -448,7 +448,7 @@ const Dashboard = () => {
                   />
                 ))}
 
-                {/* Create board card */}
+                {}
                 {!showStarredOnly && (
                   <div
                     onClick={() => setShowBoardModal(true)}
@@ -476,7 +476,7 @@ const Dashboard = () => {
         </main>
       </div>
 
-      {/* Footer FIX: Matched footer to dark background */}
+      {}
       <footer className="bg-transparent border-t border-white/10 p-10 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="col-span-2">
           <h4 className="text-xl font-bold text-white mb-4">TaskFlow</h4>
@@ -504,7 +504,7 @@ const Dashboard = () => {
         </div>
       </footer>
 
-      {/* Create Workspace Modal */}
+      {}
       {showWorkspaceModal && (
         <Modal
           title="Create a new workspace"
@@ -528,7 +528,7 @@ const Dashboard = () => {
         </Modal>
       )}
 
-      {/* Create Board Modal */}
+      {}
       {showBoardModal && (
         <Modal
           title={`New board in "${activeWorkspace?.name}"`}

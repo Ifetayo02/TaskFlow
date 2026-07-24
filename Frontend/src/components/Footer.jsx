@@ -9,7 +9,7 @@ const Footer = () => {
   return (
     <footer style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
       <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-5 gap-12">
-        {/* Brand */}
+        {}
         <div className="col-span-2">
           <div className="flex items-center gap-2 font-bold text-xl mb-6 text-white">
             <img src={logo} alt="TaskFlow Logo" width="36" height="36" />
@@ -24,7 +24,7 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Link columns */}
+        {}
         {[
           { title: 'Product', links: ['Features', 'Security', 'Status'] },
           { title: 'Company', links: ['About', 'Careers', 'Contact'] },
@@ -49,7 +49,7 @@ const Footer = () => {
         ))}
       </div>
 
-      {/* Bottom bar */}
+      {}
       <div
         className="max-w-7xl mx-auto px-6 pb-8 flex flex-col sm:flex-row items-center justify-between gap-4"
         style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '2rem' }}

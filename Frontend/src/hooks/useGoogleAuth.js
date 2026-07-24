@@ -1,6 +1,6 @@
-// client/src/hooks/useGoogleAuth.js
+
 import { useState } from 'react';
-import { signInWithPopup } from 'firebase/auth'; // 💡 Changed
+import { signInWithPopup } from 'firebase/auth'; 
 import { auth, googleProvider } from '../config/firebase';
 import { googleAuthAPI } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
@@ -17,7 +17,7 @@ const useGoogleAuth = () => {
       setLoading(true);
       setError('');
       
-      // 💡 1. Trigger the popup directly
+      
       const result = await signInWithPopup(auth, googleProvider);
       console.log('Popup result:', result);
 
@@ -27,7 +27,7 @@ const useGoogleAuth = () => {
         return;
       }
 
-      // 💡 2. Send straight to your backend right here
+      
       const res = await googleAuthAPI({
         name: firebaseUser.displayName,
         email: firebaseUser.email,
@@ -52,7 +52,7 @@ const useGoogleAuth = () => {
     }
   };
 
-  return { signInWithGoogle, loading, error }; // No more useEffect needed!
+  return { signInWithGoogle, loading, error }; 
 };
 
 export default useGoogleAuth;

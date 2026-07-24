@@ -32,7 +32,7 @@ const Sidebar = () => {
     >
       <div className="flex flex-col items-center w-full py-4 gap-1 flex-1">
 
-        {/* Logo — always goes to dashboard */}
+        {}
         <button
           onClick={() => navigate('/dashboard')}
           style={{ width: '40px', height: '40px', marginBottom: '12px' }}
@@ -41,7 +41,7 @@ const Sidebar = () => {
           <LayoutGrid size={18} className="text-white" />
         </button>
 
-        {/* My Tasks — always works */}
+        {}
         <NavIcon
           icon={ClipboardList}
           tooltip="My Tasks"
@@ -49,7 +49,7 @@ const Sidebar = () => {
           onClick={() => navigate('/my-tasks')}
         />
 
-        {/* Members — goes to invite if workspace known, else dashboard */}
+        {}
         <NavIcon
           icon={Users}
           tooltip="Members"
@@ -61,7 +61,7 @@ const Sidebar = () => {
           }
         />
 
-        {/* Analytics — goes to analytics if board known, else dashboard */}
+        {}
         <NavIcon
           icon={BarChart2}
           tooltip="Analytics"
@@ -73,7 +73,7 @@ const Sidebar = () => {
           }
         />
 
-        {/* Bottom */}
+        {}
         <div className="mt-auto flex flex-col items-center gap-1 w-full">
           <NavIcon
             icon={Settings}

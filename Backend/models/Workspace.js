@@ -1,4 +1,4 @@
-// server/models/Workspace.js
+
 const mongoose = require('mongoose');
 
 const workspaceSchema = new mongoose.Schema(

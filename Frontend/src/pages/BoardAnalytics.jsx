@@ -117,7 +117,7 @@ const BoardAnalytics = () => {
       <Sidebar />
 
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
+        {}
         <header
           className="h-16 border-b flex items-center px-4 md:px-8 gap-4 flex-shrink-0"
           style={{
@@ -140,11 +140,11 @@ const BoardAnalytics = () => {
           </div>
         </header>
 
-        {/* Content */}
+        {}
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
           <div className="max-w-3xl w-full mx-auto">
 
-            {/* Top stats — 1 col mobile, 3 col desktop */}
+            {}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
               <StatCard label="Total Tasks" value={stats.total} />
               <StatCard
@@ -159,7 +159,7 @@ const BoardAnalytics = () => {
               />
             </div>
 
-            {/* Overdue warning */}
+            {}
             {stats.overdue > 0 && (
               <div
                 className="mb-6 flex items-start gap-3 rounded-xl px-4 md:px-5 py-4"
@@ -180,7 +180,7 @@ const BoardAnalytics = () => {
               </div>
             )}
 
-            {/* Empty state */}
+            {}
             {stats.total === 0 ? (
               <div
                 className="rounded-2xl p-12 text-center"
@@ -192,7 +192,7 @@ const BoardAnalytics = () => {
               </div>
             ) : (
               <>
-                {/* By Status */}
+                {}
                 <div className="rounded-2xl p-5 md:p-6 mb-4 md:mb-6" style={cardStyle}>
                   <h2 className="text-sm font-bold text-white mb-5">
                     Tasks by Status
@@ -217,7 +217,7 @@ const BoardAnalytics = () => {
                   />
                 </div>
 
-                {/* By Priority */}
+                {}
                 <div className="rounded-2xl p-5 md:p-6" style={cardStyle}>
                   <h2 className="text-sm font-bold text-white mb-5">
                     Tasks by Priority

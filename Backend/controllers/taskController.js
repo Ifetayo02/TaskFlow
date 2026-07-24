@@ -1,7 +1,7 @@
-// server/controllers/taskController.js
+
 const Task = require('../models/Task');
 
-// GET /api/tasks?boardId=xxx — get all tasks for a board
+
 const getTasks = async (req, res) => {
   try {
     const tasks = await Task.find({ board: req.query.boardId })
@@ -14,7 +14,7 @@ const getTasks = async (req, res) => {
   }
 };
 
-// POST /api/tasks — create a new task
+
 const createTask = async (req, res) => {
   try {
     const { title, boardId, workspaceId, status, dueDate, label, priority } = req.body;
@@ -35,10 +35,10 @@ const createTask = async (req, res) => {
   }
 };
 
-// PATCH /api/tasks/:id — update a task (title, description, dueDate etc)
 
 
-// PATCH /api/tasks/:id/move — handle drag and drop column change
+
+
 const moveTask = async (req, res) => {
   try {
     const { status, position } = req.body;
@@ -59,7 +59,7 @@ const moveTask = async (req, res) => {
   }
 };
 
-// DELETE /api/tasks/:id
+
 const deleteTask = async (req, res) => {
   try {
     const task = await Task.findByIdAndDelete(req.params.id);
@@ -85,7 +85,7 @@ const getMyTasks = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-// GET /api/tasks/analytics?boardId=xxx — task stats for a board
+
 const getBoardAnalytics = async (req, res) => {
   try {
     const { boardId } = req.query;
@@ -120,7 +120,7 @@ const updateTask = async (req, res) => {
     const task = await Task.findById(req.params.id);
     if (!task) return res.status(404).json({ message: 'Task not found' });
 
-    // build activity entry
+    
     const changes = [];
     if (req.body.status && req.body.status !== task.status) {
       changes.push(`moved to ${req.body.status}`);
@@ -151,7 +151,7 @@ const updateTask = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-// GET /api/tasks/search?q=keyword
+
 const searchTasks = async (req, res) => {
   try {
     const { q } = req.query;
@@ -159,7 +159,7 @@ const searchTasks = async (req, res) => {
       return res.json([]);
     }
 
-    // find all workspaces the user belongs to
+    
     const workspaces = await require('../models/Workspace').find({
       $or: [
         { owner: req.user._id },

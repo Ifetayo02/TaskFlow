@@ -147,14 +147,14 @@ const InviteMembers = () => {
   return (
     <div className="min-h-screen flex font-sans" style={gridBg}>
 
-      {/* Sidebar — icon only on mobile, full on desktop */}
+      {}
       <div className="hidden md:block">
-        {/* import and use your Sidebar component here */}
+        {}
       </div>
 
       <div className="flex-1 flex flex-col min-w-0">
 
-        {/* Header */}
+        {}
         <header
           className="h-16 border-b flex items-center px-4 md:px-8 gap-4 flex-shrink-0"
           style={{
@@ -181,11 +181,11 @@ const InviteMembers = () => {
           </div>
         </header>
 
-        {/* Content */}
+        {}
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
           <div className="max-w-2xl w-full mx-auto">
 
-            {/* Invite Form Card */}
+            {}
             <div className="rounded-2xl p-5 md:p-8 mb-6" style={cardStyle}>
               <h2 className="text-base font-bold text-white mb-5 flex items-center gap-2">
                 <Users size={18} className="text-indigo-400" />
@@ -215,9 +215,9 @@ const InviteMembers = () => {
                 </div>
               )}
 
-              {/* Form — stacks on mobile, row on desktop */}
+              {}
               <form onSubmit={handleInvite} className="flex flex-col md:flex-row gap-3">
-                {/* Email */}
+                {}
                 <div className="relative flex-1">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                   <input
@@ -233,7 +233,7 @@ const InviteMembers = () => {
                   />
                 </div>
 
-                {/* Role */}
+                {}
                 <div className="relative">
                   <select
                     value={role}
@@ -253,7 +253,7 @@ const InviteMembers = () => {
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
                 </div>
 
-                {/* Send button */}
+                {}
                 <button
                   type="submit"
                   disabled={loading}
@@ -269,7 +269,7 @@ const InviteMembers = () => {
               </form>
             </div>
 
-            {/* Members List */}
+            {}
             <div className="rounded-2xl p-5 md:p-8" style={cardStyle}>
               <h2 className="text-base font-bold text-white mb-5">
                 Current Members

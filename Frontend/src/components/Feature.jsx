@@ -26,7 +26,7 @@ const FeatureCard = ({ icon: Icon, title, description }) => (
 const Feature = () => {
   return (
     <section className="py-24 max-w-7xl mx-auto px-6 relative">
-      {/* Section glow */}
+      {}
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-indigo-600/05 rounded-full blur-3xl pointer-events-none" />
 
       <div className="text-center mb-20 relative z-10">
@@ -53,7 +53,7 @@ const Feature = () => {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8 relative z-10">
-        {/* Analytics card */}
+        {}
         <div className="p-10 rounded-[2rem] flex flex-col justify-between min-h-[300px]" style={cardStyle}>
           <div>
             <h3 className="text-2xl font-bold text-white mb-4">Advanced Analytics</h3>

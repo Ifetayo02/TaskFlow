@@ -1,7 +1,7 @@
 
 import { Calendar, Clock } from 'lucide-react';
 
-// add this below the due date section inside the card
+
 
 
 const labelColors = {
@@ -25,28 +25,28 @@ const TaskCard = ({ task, onClick }) => {
         isDone ? 'opacity-60' : ''
       }`}
     >
-      {/* Label */}
+      {}
       {task.label && (
         <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md ${labelStyle}`}>
           {task.label}
         </span>
       )}
 
-      {/* Title */}
+      {}
       <p className={`mt-2 mb-3 text-sm font-semibold text-slate-800 leading-snug ${
         isDone ? 'line-through text-slate-400' : ''
       }`}>
         {task.title}
       </p>
 
-      {/* Footer */}
+      {}
       <div className="flex items-center justify-between mt-2">
-        {/* Assignee avatar */}
+        {}
         <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
           {task.assignedTo?.name?.charAt(0).toUpperCase() || '?'}
         </div>
 
-        {/* Due date */}
+        {}
         {task.dueDate && (
           <div className={`flex items-center gap-1 text-[11px] font-medium ${
             isOverdue && !isDone ? 'text-red-500' : 'text-slate-400'

@@ -30,7 +30,7 @@ const labelColors = {
 const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
   const { user } = useAuth();
 
-  // ── form state
+  
   const [title, setTitle] = useState(task.title || '');
   const [description, setDescription] = useState(task.description || '');
   const [status, setStatus] = useState(task.status || 'todo');
@@ -40,27 +40,27 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
     task.dueDate ? task.dueDate.split('T')[0] : ''
   );
 
-  // ── checklist state
+  
   const [checklist, setChecklist] = useState(
     task.checklist || []
   );
   const [newCheckItem, setNewCheckItem] = useState('');
 
-  // ── comments state
+  
   const [comments, setComments] = useState(task.comments || []);
   const [commentInput, setCommentInput] = useState('');
 
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  // ── checklist progress
+  
   const checkedCount = checklist.filter((i) => i.checked).length;
   const checklistPercent =
     checklist.length > 0
       ? Math.round((checkedCount / checklist.length) * 100)
       : 0;
 
-  // ── toggle checklist item
+  
   const toggleCheckItem = (index) => {
     const updated = checklist.map((item, i) =>
       i === index ? { ...item, checked: !item.checked } : item
@@ -68,7 +68,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
     setChecklist(updated);
   };
 
-  // ── add checklist item
+  
   const handleAddCheckItem = (e) => {
     e.preventDefault();
     if (!newCheckItem.trim()) return;
@@ -79,12 +79,12 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
     setNewCheckItem('');
   };
 
-  // ── remove checklist item
+  
   const removeCheckItem = (index) => {
     setChecklist((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // ── add comment
+  
   const handleAddComment = (e) => {
     e.preventDefault();
     if (!commentInput.trim()) return;
@@ -99,7 +99,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
     setCommentInput('');
   };
 
-  // ── save task
+  
   const handleSave = async () => {
     try {
       setSaving(true);
@@ -121,7 +121,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
     }
   };
 
-  // ── delete task
+  
   const handleDelete = async () => {
     if (!window.confirm('Delete this task permanently?')) return;
     try {
@@ -139,7 +139,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 font-sans">
       <div className="bg-white w-full max-w-5xl rounded-[1.5rem] shadow-2xl flex flex-col md:flex-row overflow-hidden relative max-h-[92vh]">
 
-        {/* Close Button */}
+        {}
         <button
           onClick={onClose}
           className="absolute top-6 right-6 text-slate-400 hover:text-slate-600 transition-colors z-10"
@@ -147,23 +147,23 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
           <X size={24} />
         </button>
 
-        {/* ── Left Column ── */}
+        {}
         <div className="flex-1 p-8 md:p-12 overflow-y-auto">
 
-          {/* Breadcrumb */}
+          {}
           <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">
             <AlignLeft size={14} />
             Board / {status === 'todo' ? 'To Do' : status === 'inprogress' ? 'In Progress' : 'Done'}
           </div>
 
-          {/* Title */}
+          {}
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full text-3xl font-extrabold text-slate-900 mb-10 outline-none border-b-2 border-transparent focus:border-indigo-300 transition-all bg-transparent pb-2"
           />
 
-          {/* Status + Priority row */}
+          {}
           <div className="flex gap-4 mb-10">
             <div className="flex-1">
               <label className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">
@@ -199,7 +199,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
             </div>
           </div>
 
-          {/* Description */}
+          {}
           <div className="mb-12">
             <h3 className="flex items-center gap-2 text-slate-900 font-bold mb-4">
               <AlignLeft size={18} /> Description
@@ -213,13 +213,13 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
             />
           </div>
 
-          {/* Comments */}
+          {}
           <div>
             <h3 className="flex items-center gap-2 text-slate-900 font-bold mb-6">
               <MessageSquare size={18} /> Activity & Comments
             </h3>
 
-            {/* Comment input */}
+            {}
             <form onSubmit={handleAddComment} className="flex gap-4 mb-8">
               <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                 {user?.name?.charAt(0).toUpperCase() || 'U'}
@@ -233,7 +233,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
               />
             </form>
 
-            {/* Comment thread */}
+            {}
             <div className="space-y-6">
               {comments.length === 0 && (
                 <p className="text-slate-400 text-sm italic">
@@ -272,10 +272,10 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
           </div>
         </div>
 
-        {/* ── Right Sidebar ── */}
+        {}
         <div className="w-full md:w-[340px] bg-indigo-50/20 border-l border-slate-100 p-8 md:p-10 flex flex-col gap-10 overflow-y-auto">
 
-          {/* Label */}
+          {}
           <section>
             <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4">
               Labels
@@ -301,7 +301,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
             </select>
           </section>
 
-          {/* Due Date */}
+          {}
           <section>
             <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4">
               Due Date
@@ -317,7 +317,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
             </div>
           </section>
 
-          {/* Checklist */}
+          {}
           <section>
             <div className="flex justify-between items-center mb-4">
               <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
@@ -330,7 +330,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
               )}
             </div>
 
-            {/* Progress bar */}
+            {}
             {checklist.length > 0 && (
               <div className="w-full bg-indigo-100 h-2 rounded-full mb-6 overflow-hidden">
                 <div
@@ -340,7 +340,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
               </div>
             )}
 
-            {/* Checklist items */}
+            {}
             <div className="space-y-3 mb-4">
               {checklist.map((item, i) => (
                 <div
@@ -379,7 +379,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
               ))}
             </div>
 
-            {/* Add checklist item */}
+            {}
             <form onSubmit={handleAddCheckItem} className="flex gap-2">
               <input
                 type="text"
@@ -397,7 +397,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
             </form>
           </section>
 
-          {/* Attachments — UI only, no upload backend */}
+          {}
           <section>
             <div className="flex justify-between items-center mb-4">
               <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
@@ -412,7 +412,7 @@ const TaskModal = ({ task, onClose, onUpdate, onDelete }) => {
             </p>
           </section>
 
-          {/* Action buttons */}
+          {}
           <div className="mt-auto pt-6 border-t border-slate-100 space-y-3">
             <button
               onClick={handleSave}

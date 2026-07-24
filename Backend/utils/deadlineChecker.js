@@ -1,4 +1,4 @@
-// server/utils/deadlineChecker.js
+
 const cron = require('node-cron');
 const Task = require('../models/Task');
 const sendEmail = require('./sendEmail');
@@ -57,7 +57,7 @@ const buildEmailTemplate = (userName, taskTitle, dueDate, boardTitle) => `
 `;
 
 const startDeadlineChecker = () => {
-  // runs every day at 8:00am
+  
   cron.schedule('0 8 * * *', async () => {
     console.log('⏰ Running deadline check...');
 
@@ -65,7 +65,7 @@ const startDeadlineChecker = () => {
       const now = new Date();
       const in24hrs = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
-      // find tasks due within the next 24 hours that aren't done
+      
       const tasks = await Task.find({
         dueDate: { $gte: now, $lte: in24hrs },
         status: { $ne: 'done' },

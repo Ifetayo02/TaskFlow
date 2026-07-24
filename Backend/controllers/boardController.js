@@ -1,8 +1,8 @@
-// server/controllers/boardController.js
+
 const Board = require('../models/Board');
 const Workspace = require('../models/Workspace');
 
-// GET /api/boards/:id — get a single board with its tasks
+
 const getBoard = async (req, res) => {
   try {
     const board = await Board.findById(req.params.id)
@@ -18,7 +18,7 @@ const getBoard = async (req, res) => {
   }
 };
 
-// POST /api/boards — create a new board inside a workspace
+
 const createBoard = async (req, res) => {
   try {
     const { title, workspaceId, bgColor } = req.body;
@@ -40,7 +40,7 @@ const createBoard = async (req, res) => {
       members: [req.user._id],
     });
 
-    // add board reference to the workspace
+    
     await Workspace.findByIdAndUpdate(workspaceId, {
       $push: { boards: board._id },
     });
@@ -51,7 +51,7 @@ const createBoard = async (req, res) => {
   }
 };
 
-// DELETE /api/boards/:id
+
 const deleteBoard = async (req, res) => {
   try {
     const board = await Board.findById(req.params.id);
@@ -66,7 +66,7 @@ const deleteBoard = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-// PATCH /api/boards/:id/star — toggle starred status
+
 const toggleStar = async (req, res) => {
   try {
     const board = await Board.findById(req.params.id);
@@ -81,7 +81,7 @@ const toggleStar = async (req, res) => {
   }
 };
 
-// GET /api/boards/:id/members
+
 const getBoardMembers = async (req, res) => {
   try {
     const board = await Board.findById(req.params.id)
@@ -92,7 +92,7 @@ const getBoardMembers = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-// PATCH /api/boards/:id/background
+
 const updateBackground = async (req, res) => {
   try {
     const { bgColor } = req.body;

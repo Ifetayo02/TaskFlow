@@ -1,4 +1,4 @@
-// server/routes/boards.js
+
 const express = require('express');
 const router = express.Router();
 const { getBoard, createBoard, deleteBoard, toggleStar, getBoardMembers,updateBackground } = require('../controllers/boardController');

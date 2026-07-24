@@ -14,7 +14,7 @@ const Column = ({ column, tasks, onAddCard, onCardClick }) => {
 
   return (
     <div className="flex flex-col w-64 md:w-72 shrink-0">
-      {/* Column Header */}
+      {}
       <div className="flex items-center justify-between px-3 py-3 mb-3">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">
@@ -29,10 +29,10 @@ const Column = ({ column, tasks, onAddCard, onCardClick }) => {
         </button>
       </div>
 
-      {/* Top color bar */}
+      {}
       <div className={`h-0.5 w-full ${statusStyles[column.status]} rounded-full mb-3 opacity-60`} />
 
-      {/* Cards */}
+      {}
       <SortableContext
         items={tasks.map((t) => t._id)}
         strategy={verticalListSortingStrategy}
@@ -51,7 +51,7 @@ const Column = ({ column, tasks, onAddCard, onCardClick }) => {
         </div>
       </SortableContext>
 
-      {/* Add card button */}
+      {}
       <button
         onClick={() => onAddCard(column.status)}
         className="mt-4 flex items-center gap-2 text-slate-500 hover:text-slate-200 text-sm font-medium py-2 px-3 rounded-xl hover:bg-white/5 transition-all w-full"

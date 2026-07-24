@@ -1,4 +1,4 @@
-// server/models/Task.js
+
 const mongoose = require('mongoose');
 
 const taskSchema = new mongoose.Schema(
@@ -43,13 +43,13 @@ const taskSchema = new mongoose.Schema(
     },
     position: {
       type: Number,
-      default: 0, // controls card order within a column
+      default: 0, 
     },
     label: {
       type: String,
       default: '',
     },
-    // MOVED INSIDE THE MAIN OBJECT
+    
     checklist: [
       {
         label: { type: String, required: true },

@@ -1,4 +1,4 @@
-// client/src/api/boards.js
+
 import axiosInstance from './axiosInstance';
 
 export const createBoard = (data) =>

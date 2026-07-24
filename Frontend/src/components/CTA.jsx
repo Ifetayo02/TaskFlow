@@ -10,13 +10,13 @@ const CTA = () => {
       <div
         className="rounded-[3rem] p-12 md:p-24 text-center text-white relative overflow-hidden"
         style={{
-          // Fixed background opacity and color to match the image
+          
           background: 'rgba(21, 26, 38, 0.95)',
           border: '1px solid rgba(255,255,255,0.08)',
           backdropFilter: 'blur(20px)',
         }}
       >
-        {/* Glow effects */}
+        {}
         <div className="absolute top-0 right-0 w-96 h-96 blur-[120px] rounded-full -mr-20 -mt-20 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/15 blur-[120px] rounded-full -ml-20 -mb-20 pointer-events-none" />
 
@@ -56,12 +56,12 @@ const CTA = () => {
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </button>
 
-            {/* Fixed Talk to Sales button with solid light background */}
+            {}
             <button
               onClick={() => navigate('/contact-sales')}
               className="px-8 py-4 rounded-xl font-bold transition-all text-gray-900 hover:bg-gray-100"
               style={{
-                background: '#E5E7EB', // Solid light background
+                background: '#E5E7EB', 
               }}
             >
               Log In

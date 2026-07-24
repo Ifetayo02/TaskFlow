@@ -73,7 +73,7 @@ const MyTasks = () => {
       <Sidebar />
 
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
+        {}
         <header
           className="h-16 border-b flex items-center px-4 md:px-8 gap-3 flex-shrink-0"
           style={{
@@ -97,11 +97,11 @@ const MyTasks = () => {
           </div>
         </header>
 
-        {/* Content */}
+        {}
         <div className="flex-1 overflow-y-auto p-3 md:p-8">
           <div className="max-w-3xl w-full mx-auto">
 
-            {/* Filter tabs — scrollable on mobile */}
+            {}
             <div className="flex gap-2 mb-4 md:mb-6 overflow-x-auto pb-1 scrollbar-hide">
               {filters.map((f) => (
                 <button
@@ -131,7 +131,7 @@ const MyTasks = () => {
               ))}
             </div>
 
-            {/* Error */}
+            {}
             {error && (
               <div
                 className="mb-4 flex items-center gap-3 rounded-xl px-4 py-3"
@@ -145,7 +145,7 @@ const MyTasks = () => {
               </div>
             )}
 
-            {/* Loading */}
+            {}
             {loading ? (
               <div className="flex items-center justify-center py-20">
                 <div className="flex items-center gap-3 text-slate-500">
@@ -154,7 +154,7 @@ const MyTasks = () => {
                 </div>
               </div>
 
-            /* Empty state */
+            
             ) : filteredTasks.length === 0 ? (
               <div className="text-center py-16 md:py-20">
                 <div
@@ -173,7 +173,7 @@ const MyTasks = () => {
                 </p>
               </div>
 
-            /* Task list */
+            
             ) : (
               <div className="space-y-2 md:space-y-3">
                 {filteredTasks.map((task) => {
@@ -195,7 +195,7 @@ const MyTasks = () => {
                         backdropFilter: 'blur(8px)',
                       }}
                     >
-                      {/* Top row — labels + board name */}
+                      {}
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <div className="flex items-center gap-1.5 flex-wrap">
                           {task.label && (
@@ -228,7 +228,7 @@ const MyTasks = () => {
                         )}
                       </div>
 
-                      {/* Title */}
+                      {}
                       <h3
                         className={`font-bold text-sm md:text-base mb-2 leading-snug ${
                           task.status === 'done'
@@ -239,7 +239,7 @@ const MyTasks = () => {
                         {task.title}
                       </h3>
 
-                      {/* Bottom row — due date + priority */}
+                      {}
                       <div className="flex items-center justify-between gap-2">
                         {task.dueDate ? (
                           <div

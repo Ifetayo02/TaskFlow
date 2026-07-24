@@ -28,13 +28,13 @@ const Navbar = () => {
       }}
     >
       <nav className="flex items-center justify-between px-6 md:px-12 py-4 max-w-7xl mx-auto w-full">
-        {/* Logo */}
+        {}
         <div className="flex items-center gap-2 font-bold text-xl tracking-tight text-white">
           <img src={logo} alt="TaskFlow Logo" width="36" height="36" />
           <span className="hidden sm:inline">TaskFlow</span>
         </div>
 
-        {/* Desktop auth buttons */}
+        {}
         <div className="hidden sm:flex items-center gap-3">
           <button
             onClick={() => navigate('/signin')}
@@ -54,7 +54,7 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile — show both buttons inline (no hamburger needed since we only have 2 buttons) */}
+        {}
         <div className="flex sm:hidden items-center gap-2">
           <button
             onClick={() => navigate('/signin')}

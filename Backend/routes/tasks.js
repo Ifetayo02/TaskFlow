@@ -1,4 +1,4 @@
-// server/routes/tasks.js
+
 const express = require('express');
 const router = express.Router();
 const { getTasks, createTask, updateTask, moveTask, deleteTask,getMyTasks,getBoardAnalytics,searchTasks } = require('../controllers/taskController');

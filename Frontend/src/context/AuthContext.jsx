@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentBoard, setCurrentBoard] = useState(null);
-  // { boardId: '...', workspaceId: '...' }
+  
 
   useEffect(() => {
     const token = localStorage.getItem('token');

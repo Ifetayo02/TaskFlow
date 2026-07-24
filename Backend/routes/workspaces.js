@@ -16,7 +16,7 @@ router.get('/', getWorkspaces);
 router.post('/', createWorkspace);
 router.delete('/:id', deleteWorkspace);
 
-// member management
+
 router.get('/:id/members', getMembers);
 router.post('/:id/invite', inviteMember);
 router.delete('/:id/members/:userId', removeMember);
