@@ -1,6 +1,7 @@
 
 const Workspace = require('../models/Workspace');
 const User = require('../models/User');
+const Board = require('../models/Board');
 
 
 const getWorkspaces = async (req, res) => {
@@ -29,7 +30,7 @@ const createWorkspace = async (req, res) => {
       members: [{ user: req.user._id, role: 'admin' }],
     });
 
-    
+
     await User.findByIdAndUpdate(req.user._id, {
       $push: { workspaces: workspace._id },
     });
@@ -49,7 +50,7 @@ const deleteWorkspace = async (req, res) => {
       return res.status(404).json({ message: 'Workspace not found' });
     }
 
-    
+
     if (workspace.owner.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized' });
     }
@@ -104,13 +105,20 @@ const inviteMember = async (req, res) => {
         role: role || 'member',
       });
 
+
+
+      await Board.updateMany(
+        { workspace: workspace._id },
+        { $addToSet: { members: existingUser._id } }
+      );
+
       await User.findByIdAndUpdate(existingUser._id, {
         $push: { workspaces: workspace._id },
       });
 
       await workspace.save();
 
-      
+
       try {
         await sendEmail({
           to: email,
@@ -118,7 +126,7 @@ const inviteMember = async (req, res) => {
           html: `<p>Hi ${existingUser.name}, you've been added to <b>${workspace.name}</b> as a ${role || 'member'}.</p>`,
         });
       } catch (emailErr) {
-        
+
         console.log('Email notification failed (non-critical):', emailErr.message);
       }
 
@@ -128,7 +136,7 @@ const inviteMember = async (req, res) => {
       });
     }
 
-    
+
     try {
       await sendEmail({
         to: email,
@@ -157,7 +165,7 @@ const removeMember = async (req, res) => {
       return res.status(404).json({ message: 'Workspace not found' });
     }
 
-    
+
     if (workspace.owner.toString() === req.params.userId) {
       return res.status(400).json({ message: 'Cannot remove the workspace owner' });
     }
