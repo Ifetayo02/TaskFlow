@@ -15,9 +15,15 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  useEffect(() => {
-    if (user) navigate('/dashboard');
-  }, [user, navigate]);
+// replace the useEffect in SignUp.jsx with this
+useEffect(() => {
+  // only auto-redirect if they have a valid active session
+  // and didn't manually navigate to signup
+  const token = localStorage.getItem('token');
+  if (user && token) {
+    navigate('/dashboard');
+  }
+}, [user]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
