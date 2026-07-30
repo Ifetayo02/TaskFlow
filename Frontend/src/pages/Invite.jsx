@@ -41,8 +41,6 @@ const InviteMembers = () => {
   const [pageLoading, setPageLoading] = useState(true);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-
-  // workspace name editing
   const [editingName, setEditingName] = useState(false);
   const [newName, setNewName] = useState('');
   const [nameLoading, setNameLoading] = useState(false);
@@ -106,7 +104,6 @@ const InviteMembers = () => {
   };
 
   const handleRemove = async (userId, memberRole) => {
-    // client-side guard
     if (memberRole === 'admin' && !isOwner) {
       return setErrorMsg('Only the workspace owner can remove an admin.');
     }
@@ -159,7 +156,6 @@ const InviteMembers = () => {
       <Sidebar />
 
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
         <header
           className="h-16 border-b flex items-center px-4 md:px-8 gap-4 flex-shrink-0"
           style={{
@@ -175,7 +171,6 @@ const InviteMembers = () => {
             <ArrowLeft size={18} />
           </button>
           <div className="min-w-0 flex-1 flex items-center gap-3">
-            {/* Editable workspace name */}
             {editingName ? (
               <div className="flex items-center gap-2 flex-1">
                 <input
@@ -217,7 +212,6 @@ const InviteMembers = () => {
                   </h1>
                   <p className="text-xs text-slate-500">Manage workspace members</p>
                 </div>
-                {/* Edit name button — owners only */}
                 {isOwner && (
                   <button
                     onClick={() => setEditingName(true)}
@@ -234,8 +228,6 @@ const InviteMembers = () => {
 
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
           <div className="max-w-2xl w-full mx-auto">
-
-            {/* Owner badge */}
             {isOwner && (
               <div
                 className="flex items-center gap-2 px-4 py-3 rounded-xl mb-6 text-sm"
@@ -250,8 +242,6 @@ const InviteMembers = () => {
                 </span>
               </div>
             )}
-
-            {/* Invite Form — admins and owners only */}
             {isAdmin && (
               <div className="rounded-2xl p-5 md:p-8 mb-6" style={cardStyle}>
                 <h2 className="text-base font-bold text-white mb-5 flex items-center gap-2">
@@ -328,8 +318,6 @@ const InviteMembers = () => {
                 </form>
               </div>
             )}
-
-            {/* Members list */}
             <div className="rounded-2xl p-5 md:p-8" style={cardStyle}>
               <h2 className="text-base font-bold text-white mb-5">
                 Current Members
@@ -366,7 +354,6 @@ const InviteMembers = () => {
                         key={member.user._id}
                         className="flex items-center justify-between py-4 border-b border-white/5 last:border-0 gap-3"
                       >
-                        {/* Avatar + info */}
                         <div className="flex items-center gap-3 min-w-0">
                           <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 overflow-hidden">
                             {member.user.avatar ? (
@@ -398,10 +385,8 @@ const InviteMembers = () => {
                             </p>
                           </div>
                         </div>
-
-                        {/* Role + actions */}
                         <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
-                          {/* Role — dropdown for owner, badge for others */}
+                          
                           {isOwner && !isMemberOwner && !isCurrentUser ? (
                             <div className="relative">
                               <select
@@ -435,7 +420,7 @@ const InviteMembers = () => {
                             </span>
                           )}
 
-                          {/* Remove button */}
+                        
                           {canRemove && (
                             <button
                               onClick={() => handleRemove(member.user._id, member.role)}
