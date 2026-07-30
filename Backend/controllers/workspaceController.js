@@ -129,14 +129,11 @@ const inviteMember = async (req, res) => {
 
         console.log('Email notification failed (non-critical):', emailErr.message);
       }
-
       return res.json({
         message: `${existingUser.name} has been added to the workspace.`,
         member: { user: existingUser, role: role || 'member' },
       });
     }
-
-
     try {
       await sendEmail({
         to: email,
@@ -160,14 +157,33 @@ const inviteMember = async (req, res) => {
 const removeMember = async (req, res) => {
   try {
     const workspace = await Workspace.findById(req.params.id);
-
     if (!workspace) {
       return res.status(404).json({ message: 'Workspace not found' });
     }
 
+    const requestingMember = workspace.members.find(
+      (m) => m.user.toString() === req.user._id.toString()
+    );
 
+    const isOwner = workspace.owner.toString() === req.user._id.toString();
+    const isAdmin = requestingMember?.role === 'admin';
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({
+        message: 'Only admins can remove members.',
+      });
+    }
     if (workspace.owner.toString() === req.params.userId) {
-      return res.status(400).json({ message: 'Cannot remove the workspace owner' });
+      return res.status(400).json({
+        message: 'The workspace owner cannot be removed.',
+      });
+    }
+    const targetMember = workspace.members.find(
+      (m) => m.user.toString() === req.params.userId
+    );
+    if (targetMember?.role === 'admin' && !isOwner) {
+      return res.status(403).json({
+        message: 'Only the workspace owner can remove an admin.',
+      });
     }
 
     workspace.members = workspace.members.filter(
@@ -175,7 +191,69 @@ const removeMember = async (req, res) => {
     );
 
     await workspace.save();
-    res.json({ message: 'Member removed successfully' });
+    res.json({ message: 'Member removed successfully.' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+const updateWorkspace = async (req, res) => {
+  try {
+    const { name } = req.body;
+    const workspace = await Workspace.findById(req.params.id);
+
+    if (!workspace) {
+      return res.status(404).json({ message: 'Workspace not found' });
+    }
+    if (workspace.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: 'Only the workspace owner can edit workspace details.',
+      });
+    }
+
+    if (!name?.trim()) {
+      return res.status(400).json({ message: 'Workspace name is required.' });
+    }
+
+    workspace.name = name.trim();
+    await workspace.save();
+
+    res.json(workspace);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const updateMemberRole = async (req, res) => {
+  try {
+    const { role } = req.body;
+    const workspace = await Workspace.findById(req.params.id);
+
+    if (!workspace) {
+      return res.status(404).json({ message: 'Workspace not found' });
+    }
+    if (workspace.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: 'Only the workspace owner can change member roles.',
+      });
+    }
+    if (workspace.owner.toString() === req.params.userId) {
+      return res.status(400).json({
+        message: 'Cannot change the owner\'s role.',
+      });
+    }
+
+    const member = workspace.members.find(
+      (m) => m.user.toString() === req.params.userId
+    );
+
+    if (!member) {
+      return res.status(404).json({ message: 'Member not found.' });
+    }
+
+    member.role = role;
+    await workspace.save();
+
+    res.json({ message: 'Role updated successfully.', member });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -188,4 +266,6 @@ module.exports = {
   getMembers,
   inviteMember,
   removeMember,
+  updateWorkspace,
+  updateMemberRole,
 };
