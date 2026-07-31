@@ -23,6 +23,10 @@ router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 router.patch('/update-profile', protect, updateProfile);
 router.patch('/change-password', protect, changePassword);
-router.post('/upload-avatar', protect, upload.single('avatar'), uploadAvatar);
-
+router.post(
+  '/upload-avatar',
+  protect,
+  upload.single('avatar'),
+  uploadAvatar
+);
 module.exports = router;
