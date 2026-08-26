@@ -10,11 +10,7 @@ import Sidebar from '../components/layout/Sidebar';
 
 const ROLES = ['admin', 'member', 'viewer'];
 
-const gridBg = {
-  backgroundColor: '#0f172a',
-  backgroundImage: `linear-gradient(rgba(99,102,241,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.05) 1px, transparent 1px)`,
-  backgroundSize: '32px 32px',
-};
+
 
 const cardStyle = {
   background: 'rgba(30,41,59,0.8)',
@@ -152,7 +148,7 @@ const InviteMembers = () => {
   };
 
   return (
-    <div className="min-h-screen flex font-sans" style={gridBg}>
+    <div className="min-h-screen flex font-sans bg-slate-950 text-slate-200">
       <Sidebar />
 
       <div className="flex-1 flex flex-col min-w-0">
