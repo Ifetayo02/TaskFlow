@@ -24,11 +24,7 @@ const statusColors = {
   done: 'bg-emerald-500/20 text-emerald-400',
 };
 
-const gridBg = {
-  backgroundColor: '#0f172a',
-  backgroundImage: `linear-gradient(rgba(99,102,241,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.05) 1px, transparent 1px)`,
-  backgroundSize: '32px 32px',
-};
+
 
 const MyTasks = () => {
   const navigate = useNavigate();
@@ -69,7 +65,7 @@ const MyTasks = () => {
   ).length;
 
   return (
-    <div className="min-h-screen flex font-sans" style={gridBg}>
+    <div className="h-screen flex text-slate-200 overflow-hidden font-sans bg-slate-950">
       <Sidebar />
 
       <div className="flex-1 flex flex-col min-w-0">

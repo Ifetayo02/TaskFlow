@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { registerUser } from '../api/auth';
 import useGoogleAuth from '../hooks/useGoogleAuth';
 import { useAuth } from '../context/AuthContext';
+import { motion } from 'framer-motion';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -57,10 +58,7 @@ useEffect(() => {
   };
 
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center p-6 font-sans relative overflow-hidden"
-      style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)' }}
-    >
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 font-sans relative overflow-hidden bg-slate-950 text-slate-50">
       {}
       {}
       {}
@@ -74,14 +72,10 @@ useEffect(() => {
         </button>
       </div>
       {}
-      <div
-        className="w-full max-w-[480px] rounded-[2rem] p-10 md:p-14 relative z-10"
-        style={{
-          background: 'rgba(255,255,255,0.07)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255,255,255,0.12)',
-          boxShadow: '0 25px 50px rgba(0,0,0,0.4)',
-        }}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-[480px] rounded-[2rem] p-10 md:p-14 relative z-10 bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_25px_50px_rgba(0,0,0,0.4)]"
       >
         {}
         <div className="text-center mb-10">
@@ -209,7 +203,7 @@ useEffect(() => {
             Sign in
           </Link>
         </p>
-      </div>
+      </motion.div>
 
       {}
       <div className="mt-8 flex gap-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest relative z-10">
