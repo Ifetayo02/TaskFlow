@@ -325,19 +325,32 @@ const changePassword = async (req, res) => {
   }
 };
 
-
 const uploadAvatar = async (req, res) => {
   try {
+    console.log('Upload avatar called');
+    console.log('File received:', req.file);
+    console.log('User:', req.user?._id);
+
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded.' });
     }
 
     const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
 
-    
+    // delete old avatar from Cloudinary if exists
     if (user.avatar) {
-      const publicId = user.avatar.split('/').pop().split('.')[0];
-      await cloudinary.uploader.destroy(`taskflow/avatars/${publicId}`);
+      try {
+        const urlParts = user.avatar.split('/');
+        const publicIdWithExt = urlParts[urlParts.length - 1];
+        const publicId = `taskflow/avatars/${publicIdWithExt.split('.')[0]}`;
+        await cloudinary.uploader.destroy(publicId);
+      } catch (deleteErr) {
+        // don't fail if old avatar deletion fails
+        console.log('Could not delete old avatar:', deleteErr.message);
+      }
     }
 
     user.avatar = req.file.path;
@@ -350,6 +363,7 @@ const uploadAvatar = async (req, res) => {
       avatar: user.avatar,
     });
   } catch (error) {
+    console.error('uploadAvatar error:', error);
     res.status(500).json({ message: error.message });
   }
 };
