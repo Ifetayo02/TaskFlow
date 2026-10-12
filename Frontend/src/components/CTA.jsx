@@ -1,20 +1,19 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const CTA = () => {
   const navigate = useNavigate();
 
   return (
     <div className="px-6 py-20 max-w-7xl mx-auto">
-      <div
-        className="rounded-[3rem] p-12 md:p-24 text-center text-white relative overflow-hidden"
-        style={{
-          
-          background: 'rgba(21, 26, 38, 0.95)',
-          border: '1px solid rgba(255,255,255,0.08)',
-          backdropFilter: 'blur(20px)',
-        }}
+      <motion.div
+        whileInView={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.5 }}
+        viewport={{ once: true }}
+        className="rounded-[3rem] p-12 md:p-24 text-center text-white relative overflow-hidden bg-slate-900 border border-slate-800 backdrop-blur-xl"
       >
         {}
         <div className="absolute top-0 right-0 w-96 h-96 blur-[120px] rounded-full -mr-20 -mt-20 pointer-events-none" />
@@ -22,23 +21,14 @@ const CTA = () => {
 
         <div className="relative z-10">
           <div
-            className="inline-flex items-center px-4 py-1.5 mb-6 text-xs font-bold tracking-wider text-indigo-300 uppercase rounded-full"
-            style={{
-              background: 'rgba(99,102,241,0.15)',
-              border: '1px solid rgba(99,102,241,0.3)',
-            }}
+            className="inline-flex items-center px-4 py-1.5 mb-6 text-xs font-bold tracking-wider text-indigo-300 uppercase rounded-full bg-indigo-500/10 border border-indigo-500/20"
           >
             Free to get started
           </div>
 
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Ready to hit{' '}
-            <span
-              className="text-transparent bg-clip-text"
-              style={{
-                backgroundImage: 'linear-gradient(135deg, #818cf8, #6366f1, #a78bfa)',
-              }}
-            >
+            <span className="text-indigo-400">
               flow state?
             </span>
           </h2>
@@ -58,17 +48,14 @@ const CTA = () => {
 
             {}
             <button
-              onClick={() => navigate('/contact-sales')}
-              className="px-8 py-4 rounded-xl font-bold transition-all text-gray-900 hover:bg-gray-100"
-              style={{
-                background: '#E5E7EB', 
-              }}
+              onClick={() => navigate('/signin')}
+              className="px-8 py-4 rounded-xl font-bold transition-all text-gray-900 hover:bg-gray-100 bg-gray-200"
             >
               Log In
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

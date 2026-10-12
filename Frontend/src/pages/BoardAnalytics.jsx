@@ -5,11 +5,7 @@ import Sidebar from '../components/layout/Sidebar';
 import { getBoardAnalytics } from '../api/tasks';
 import axiosInstance from '../api/axiosInstance';
 
-const gridBg = {
-  backgroundColor: '#0f172a',
-  backgroundImage: `linear-gradient(rgba(99,102,241,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.05) 1px, transparent 1px)`,
-  backgroundSize: '32px 32px',
-};
+
 
 const cardStyle = {
   background: 'rgba(30,41,59,0.8)',
@@ -80,10 +76,7 @@ const BoardAnalytics = () => {
 
   if (loading) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={gridBg}
-      >
+      <div className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-200">
         <div className="flex items-center gap-3 text-slate-400">
           <Loader2 className="animate-spin" size={24} />
           <span>Loading analytics...</span>
@@ -94,10 +87,7 @@ const BoardAnalytics = () => {
 
   if (error || !stats) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={gridBg}
-      >
+      <div className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-200">
         <div className="text-center px-4">
           <AlertCircle className="text-red-400 mx-auto mb-4" size={32} />
           <p className="text-slate-400 text-sm">{error || 'No data available.'}</p>
@@ -113,7 +103,7 @@ const BoardAnalytics = () => {
   }
 
   return (
-    <div className="min-h-screen flex font-sans" style={gridBg}>
+    <div className="min-h-screen flex font-sans bg-slate-950 text-slate-200">
       <Sidebar />
 
       <div className="flex-1 flex flex-col min-w-0">

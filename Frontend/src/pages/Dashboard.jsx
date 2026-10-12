@@ -25,11 +25,7 @@ import { toggleStarBoard } from '../api/boards';
 
 import GlobalSearch from '../components/layout/GlobalSearch';
 
-const gridBg = {
-  backgroundColor: '#0f172a',
-  backgroundImage: `linear-gradient(rgba(99,102,241,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.05) 1px, transparent 1px)`,
-  backgroundSize: '32px 32px',
-};
+
 
 
 const SidebarItem = ({ icon: Icon, label, active = false, onClick }) => (
@@ -47,18 +43,18 @@ const SidebarItem = ({ icon: Icon, label, active = false, onClick }) => (
 );
 
 
-const gradients = [
-  'from-indigo-500 to-indigo-600',
-  'from-purple-500 to-purple-600',
-  'from-orange-500 to-orange-600',
-  'from-blue-700 to-blue-800',
-  'from-slate-800 to-indigo-900',
-  'from-teal-500 to-teal-600',
-  'from-rose-500 to-rose-600',
+const colors = [
+  'bg-indigo-500',
+  'bg-purple-500',
+  'bg-orange-500',
+  'bg-blue-700',
+  'bg-slate-800',
+  'bg-teal-500',
+  'bg-rose-500',
 ];
 
 const BoardCard = ({ board, index, onClick, onToggleStar }) => {
-  const gradient = gradients[index % gradients.length];
+  const color = colors[index % colors.length];
 
   const handleStarClick = (e) => {
     e.stopPropagation();
@@ -70,7 +66,7 @@ const BoardCard = ({ board, index, onClick, onToggleStar }) => {
       onClick={onClick}
       className="bg-[#1e293b] rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:shadow-indigo-500/10 transition-all group cursor-pointer border border-white/5 hover:border-white/10 hover:-translate-y-1 relative"
     >
-      <div className={`h-24 w-full bg-gradient-to-br ${gradient}`} />
+      <div className={`h-24 w-full ${color}`} />
 
       <button
         onClick={handleStarClick}
@@ -237,7 +233,7 @@ const Dashboard = () => {
 
   if (pageLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={gridBg}>
+      <div className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-200">
         <div className="flex items-center gap-3 text-slate-400">
           <Loader2 className="animate-spin" size={24} />
           <span className="font-medium">Loading your workspaces...</span>
@@ -247,7 +243,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col font-sans" style={gridBg}>
+    <div className="min-h-screen flex flex-col font-sans bg-slate-950 text-slate-200">
       <div className="flex flex-1">
         {}
 {sidebarOpen && (

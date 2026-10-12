@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { Lock, Eye, EyeOff, Loader2, ShieldCheck } from 'lucide-react';
 import { resetPasswordAPI } from '../api/auth';
+import { motion } from 'framer-motion';
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
@@ -41,21 +42,14 @@ const ResetPassword = () => {
   };
 
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center p-6 font-sans relative overflow-hidden"
-      style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)' }}
-    >
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 font-sans relative overflow-hidden bg-slate-950 text-slate-50">
       <div className="absolute top-1/4 right-1/3 w-80 h-80 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 left-1/3 w-80 h-80 bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
 
-      <div
-        className="w-full max-w-[440px] rounded-[2rem] p-10 md:p-12 relative z-10"
-        style={{
-          background: 'rgba(255,255,255,0.07)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255,255,255,0.12)',
-          boxShadow: '0 25px 50px rgba(0,0,0,0.4)',
-        }}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-[440px] rounded-[2rem] p-10 md:p-12 relative z-10 bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_25px_50px_rgba(0,0,0,0.4)]"
       >
         {}
         <div className="text-center mb-10">
@@ -149,7 +143,7 @@ const ResetPassword = () => {
             Back to Sign In
           </Link>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

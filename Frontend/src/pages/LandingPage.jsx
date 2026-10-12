@@ -7,12 +7,7 @@ import Footer from '../components/Footer';
 
 const LandingPage = () => {
   return (
-    <div
-      className="min-h-screen font-sans overflow-x-hidden"
-      style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #0f172a 100%)',
-      }}
-    >
+    <div className="min-h-screen font-sans overflow-x-hidden bg-slate-950 text-slate-50">
       <Navbar />
       <Hero />
       <Feature />
